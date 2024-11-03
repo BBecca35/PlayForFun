@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #127BA3;
+}
+
+.container {
+    background-color: #90CAF9;
+    margin-top: 75px;
+    height: 500px;
+    width: 500px;
+    padding: 20px;
+    border-radius: 50px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.text{
+    font-size: 40px;
+    color: #000;
+    margin-top: 40px;
+    margin-bottom: 25px;
+}
+
+input[type="username_text"] {
+    width: 75%;
+    padding: 8px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="password_text"] {
+    width: 75%;
+    padding: 8px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+.custom-checkbox {
+    position: relative;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    padding-left: 25px;
+    margin-top: 50px; 
+    margin-right: 220px;
+}
+
+.custom-checkbox:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #333;
+    background-color: #fff;
+    border-radius: 3px
+}
+
+input[type="checkbox"]:checked + .custom-checkbox:before {
+    content: "✔";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #4FC4F3
+}
+
+input[type="checkbox"]:checked + .custom-checkbox:before {
+    background-color: #4FC4F3;
+    color: white;
+}
+
+
+
+.submit-container {
+    background-color: #4FC4F3;
+    color: #fff;
+    width: 25%;
+    padding: 7px 10px;
+    border-radius: 5px;
+    top: -40px;
+    position: relative;
+    left: 62.5%;
+    cursor: pointer;
+}
+.submit {
+    font-size: 16px;
+
+}
+
+button:hover {
+    background-color: #228FCB;
+}
+
+.forget {
+    display: flex;
+    position: relative;
+    margin-top: 10px;
+    margin-left: 56.5px;
+    color: #007BB5;
+    font-size: 16px;
+    text-decoration: none;
+    width: 40%;
+}
+
+a:hover {
+    text-decoration: underline;
+}

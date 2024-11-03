@@ -1,0 +1,55 @@
+header {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.navbar {
+    display: flex;
+    padding: 10px 20px;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo img {
+    height: 40px; /* A logó méretének beállítása */
+    margin-right: 10px;
+}
+
+.navbar-logo h1 {
+    font-size: 24px;
+    color: #000;
+    position: absolute;
+    margin-left: 45px;
+    margin-top: 10px;
+}
+
+.register-button {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    display: flex;
+    background-color: #4FC4F3; /* Kék háttérszín */
+    padding: 7px 20px;
+    border: 5px;
+    transition: background-color 0.3s;
+    position: absolute;
+    top: 11px;
+    right: 10px;
+
+}
+
+.navbar .btn:hover {
+    background-color: #45a049;
+}
