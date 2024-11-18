@@ -1,28 +1,43 @@
 package hu.nye.home.controller;
 
+import hu.nye.home.dto.UserDto;
 import hu.nye.home.entity.UserModel;
 import hu.nye.home.repository.UserRepository;
-import org.apache.catalina.User;
+import hu.nye.home.service.Interfaces.UserServiceInterface;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 public class UserController {
     
+    private final UserServiceInterface userService;
+    
     @Autowired
-    private UserRepository userRepository;
+    public UserController(UserServiceInterface userService) {
+        this.userService = userService;
+    }
+    
     
     @PostMapping("/register")
-    UserModel newUser(@RequestBody UserModel newUser){
-        return userRepository.save(newUser);
+    public UserModel addNewUser(@RequestBody UserDto userDto){
+        return userService.saveUser(userDto);
     }
-    @GetMapping("/register")
-    List<UserModel> getAllUsers(){
-        return userRepository.findAll();
+    
+    @GetMapping("/user/{id}")
+    public UserModel getUserById(@PathVariable("id") Long id){
+        return userService.getUserById(id);
+    }
+    
+    @PutMapping("/user/{id}")
+    public UserModel updateUser(@PathVariable("id") Long id, @RequestBody @Valid UserDto dto) {
+        return userService.updateUser(id, dto);
+    }
+    
+    @DeleteMapping("/games/{id}")
+    public void deleteUser(@PathVariable("id") Long id) {
+        userService.deleteUser(id);
     }
 }

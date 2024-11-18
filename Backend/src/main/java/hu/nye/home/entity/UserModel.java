@@ -9,43 +9,44 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @Entity
 @Table(name = "users")
 public class UserModel {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
     
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true)
     private String email;
     
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "username", unique = true)
     private String username;
     
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
     
-    @Column(name = "birthdate", nullable = false)
+    @Column(name = "birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("birthdate")
     private LocalDate birthDate;
     
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
     
-    @PrePersist
-    protected void onCreate(){
-        createdAt = LocalDateTime.now();
-    }
     
+    public UserModel(String email, String username, String password, LocalDate birthDate) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.birthDate = birthDate;
+    }
     
     @Override
     public String toString() {
@@ -54,5 +55,18 @@ public class UserModel {
                  ", email='" + email + '\'' +
                  ", username='" + username + '\'' +
                  '}';
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserModel userModel = (UserModel) o;
+        return Objects.equals(email, userModel.email) && Objects.equals(username, userModel.username);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(email, username);
     }
 }
