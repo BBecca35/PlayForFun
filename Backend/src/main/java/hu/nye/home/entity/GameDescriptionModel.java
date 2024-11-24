@@ -9,49 +9,52 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "game_descriptions")
 public class GameDescriptionModel {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserModel user;
+    
+    @OneToMany(mappedBy = "game_description", cascade = CascadeType.REMOVE)
+    private List<CommentModel> comments = new ArrayList<>();
+    
+    @OneToOne
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private ImageModel image;
     
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserModel user;
-    
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String name;
     
-    @Column(name = "genre", nullable = false)
+    @Column(nullable = false)
     private String genre;
     
-    @Column(name = "publisher", nullable = false)
+    @Column(nullable = false)
     private String publisher;
     
-    @Column(name = "platform", nullable = false)
+    @Column(nullable = false)
     private String platform;
     
-    @Column(name = "published_at", nullable = false)
+    @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("published_at")
     private LocalDate publishedAt;
     
-    @Column(name = "agelimit", nullable = false)
+    @Column(nullable = false)
     private int ageLimit;
     
-    @Column(name = "description", nullable = false)
+    @Column(nullable = false)
     private String description;
     
     @Override
@@ -67,6 +70,7 @@ public class GameDescriptionModel {
                  '}';
     }
     
+    /*
     public GameDescriptionModel(ImageModel image, UserModel user,
                                 String name, String genre, String publisher,
                                 String platform, LocalDate publishedAt, int ageLimit,
@@ -81,21 +85,5 @@ public class GameDescriptionModel {
         this.ageLimit = ageLimit;
         this.description = description;
     }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        GameDescriptionModel that = (GameDescriptionModel) o;
-        return ageLimit == that.ageLimit && Objects.equals(id, that.id) &&
-                 Objects.equals(image, that.image) && Objects.equals(name, that.name) &&
-                 Objects.equals(genre, that.genre) && Objects.equals(publisher, that.publisher) &&
-                 Objects.equals(platform, that.platform) && Objects.equals(publishedAt, that.publishedAt) &&
-                 Objects.equals(description, that.description);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, image, name, genre, publisher, platform, publishedAt, ageLimit, description);
-    }
+     */
 }

@@ -1,8 +1,5 @@
 package hu.nye.home.dto;
 
-import hu.nye.home.entity.GameDescriptionModel;
-import hu.nye.home.entity.UserModel;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -19,23 +16,13 @@ public class CommentDto {
     
     private Long id;
     
-    private GameDescriptionModel gameDescription;
-    
-    private UserModel user;
-    
     @NotNull
     @NotEmpty
-    private String comment;
+    private String message;
     
     @NotNull
     @NotEmpty
     @Positive
     private double rating;
     
-    public CommentDto(GameDescriptionModel gameDescription, UserModel user, String comment, double rating) {
-        this.gameDescription = gameDescription;
-        this.user = user;
-        this.comment = comment;
-        this.rating = rating;
-    }
 }

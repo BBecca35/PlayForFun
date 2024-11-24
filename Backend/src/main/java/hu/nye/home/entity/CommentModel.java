@@ -6,13 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Objects;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "comments")
 public class CommentModel {
     
     //https://www.quora.com/What-is-the-difference-between-identity-and-auto_increment-in-MySQL
@@ -23,39 +22,22 @@ public class CommentModel {
     private Long id;
     
     //https://www.baeldung.com/jpa-one-to-one
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "game_description_id", referencedColumnName = "id")
+    //https://stackoverflow.com/questions/70621164/saving-in-one-shot-two-parents-and-one-child-spring-jpa
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "game_descriptions_id")
     private GameDescriptionModel gameDescription;
     
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private UserModel user;
     
-    @Column(name = "comment")
-    private String comment;
+    
+    @Column(name = "message")
+    private String message;
     
     @Column(name = "rating")
     private double rating;
     
-    @Override
-    public String toString() {
-        return "CommentModel{" +
-                 "user=" + user.getUsername() +
-                 ", comment='" + comment + '\'' +
-                 ", rating=" + rating +
-                 '}';
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CommentModel that = (CommentModel) o;
-        return Objects.equals(gameDescription.getId(), that.gameDescription.getId()) && Objects.equals(user.getId(), that.user.getId());
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(gameDescription, user);
-    }
 }

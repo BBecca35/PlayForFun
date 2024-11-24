@@ -2,7 +2,6 @@ package hu.nye.home.controller;
 
 import hu.nye.home.dto.UserDto;
 import hu.nye.home.entity.UserModel;
-import hu.nye.home.repository.UserRepository;
 import hu.nye.home.service.Interfaces.UserServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
+@Table(name = "images")
 public class ImageModel {
     
     @Id
@@ -22,9 +23,7 @@ public class ImageModel {
     private String path;
     private String type;
     
-    public ImageModel(String name, String path, String type) {
-        this.name = name;
-        this.path = path;
-        this.type = type;
-    }
+    @OneToOne(mappedBy = "image", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GameDescriptionModel gameDescription;
+    
 }

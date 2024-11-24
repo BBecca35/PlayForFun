@@ -1,12 +1,17 @@
 package hu.nye.home.service.Interfaces;
 
 import hu.nye.home.dto.CommentDto;
-import hu.nye.home.entity.CommentModel;
+
+import java.util.List;
 
 public interface CommentServiceInterface {
     
-    CommentModel getCommentById(Long id);
-    CommentModel saveComment(CommentDto dto);
-    CommentModel updateComment(Long id, CommentDto dto);
-    void deleteComment(Long id);
+    List<CommentDto> getCommentsByByUserId(Long id);
+    List<CommentDto> getCommentsByGameDescriptionId(Long id);
+    CommentDto getCommentById(Long userId, Long gameDescriptionId, Long commentId);
+    CommentDto saveComment(CommentDto dto, Long userId, Long gameDescriptionId);
+    CommentDto updateComment(Long commentId, CommentDto dto, Long gameDescriptionId, Long userId);
+    void deleteComment(Long gameDescriptionId, Long userId, Long commentId);
+    
+    
 }

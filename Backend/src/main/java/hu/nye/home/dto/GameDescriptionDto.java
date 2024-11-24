@@ -20,17 +20,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameDescriptionDto {
-
     
     private Long id;
-    
-    @NotEmpty
-    @NotNull
-    private ImageModel image;
-    
-    @NotEmpty
-    @NotNull
-    private UserModel user;
     
     @NotEmpty
     @NotNull
@@ -61,17 +52,4 @@ public class GameDescriptionDto {
     @NotNull
     private String description;
     
-    public GameDescriptionDto(ImageModel image, UserModel user, String name, String genre,
-                              String publisher, String platform, LocalDate publishedAt, int ageLimit,
-                              String description) {
-        this.image = image;
-        this.user = user;
-        this.name = name;
-        this.genre = genre;
-        this.publisher = publisher;
-        this.platform = platform;
-        this.publishedAt = publishedAt;
-        this.ageLimit = ageLimit;
-        this.description = description;
-    }
 }

@@ -2,6 +2,7 @@ package hu.nye.home.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import hu.nye.home.entity.GameDescriptionModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -39,16 +41,6 @@ public class UserDto {
     private LocalDate birthDate;
     
     private LocalDateTime createdAt;
+    private List<GameDescriptionModel> gameDescriptions;
     
-    @PrePersist
-    protected void onCreate(){
-        createdAt = LocalDateTime.now();
-    }
-    
-    public UserDto(String email, String username, String password, LocalDate birthDate) {
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.birthDate = birthDate;
-    }
 }

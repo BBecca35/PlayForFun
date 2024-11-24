@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
@@ -23,23 +21,32 @@ public class UserModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "email", unique = true)
+    @Column(unique = true)
     private String email;
     
-    @Column(name = "username", unique = true)
+    @Column(unique = true)
     private String username;
     
-    @Column(name = "password")
     private String password;
     
-    @Column(name = "birthdate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("birthdate")
     private LocalDate birthDate;
     
-    @Column(name = "created_at", updatable = false)
+    @Column(updatable = false)
     private LocalDateTime createdAt;
     
+    //https://github.com/teddysmithdev/pokemon-review-springboot
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GameDescriptionModel> gameDescriptions = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentModel> comments = new ArrayList<>();
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
     
     public UserModel(String email, String username, String password, LocalDate birthDate) {
         this.email = email;
@@ -55,18 +62,5 @@ public class UserModel {
                  ", email='" + email + '\'' +
                  ", username='" + username + '\'' +
                  '}';
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserModel userModel = (UserModel) o;
-        return Objects.equals(email, userModel.email) && Objects.equals(username, userModel.username);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(email, username);
     }
 }
