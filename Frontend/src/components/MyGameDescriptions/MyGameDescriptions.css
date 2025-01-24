@@ -1,0 +1,84 @@
+/* Általános stílusok */
+.my-game-decriptions-container {
+  font-family: Arial, sans-serif;
+  background-color: #127BA3;
+  color: white;
+  width: fit-content;
+  position: relative;
+  justify-content: center;
+  margin-top: 20px;
+  display: flex;
+  padding-top: 60px;
+}
+
+/* Home content */
+
+.my-description-text {
+    display: flex;
+    position: relative;
+    margin-right: auto;
+    margin-left: 1vw;
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.line{
+    position: relative;
+    width:100%; 
+    height:5px; 
+    background: white; 
+    opacity: 100%;
+}
+  
+.dynamic-table {
+  text-align: center;
+  min-width: 70vw;
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding-top: 20px;
+}
+  
+  .table-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 300px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+  }
+  
+  .table-cell img {
+    width: 100px;
+    height: 150px;
+    margin-bottom: 10px;
+  }
+  
+  .add-cell {
+    width: 200px;
+    height: 300px;
+    border:none;
+    background-color: white;
+  }
+
+  .new-text{
+    color: #000;
+  }
+  
+  .add-cell span {
+    font-size: 40px;
+    color: #0288d1;
+  }
+  
+  .add-cell:hover {
+    background-color: #b3e5fc;
+  }
