@@ -9,6 +9,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+//Roles: user, admin, moderator
+//moderator: commentek törlése, felhasználók figyelmeztetése
+//admin: felhasználók ideiglenes vagy örökös kitíltása a weboldalról,
+//amit majd a szabályszegés súlyossága fog eldönteni
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,11 +42,16 @@ public class UserModel {
     private LocalDateTime createdAt;
     
     //https://github.com/teddysmithdev/pokemon-review-springboot
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GameDescriptionModel> gameDescriptions = new ArrayList<>();
     
-    @OneToMany(mappedBy = "users", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments = new ArrayList<>();
+    
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private List<RoleModel> roles = new ArrayList<>();
     
     @PrePersist
     protected void onCreate() {
@@ -53,6 +63,12 @@ public class UserModel {
         this.username = username;
         this.password = password;
         this.birthDate = birthDate;
+    }
+    
+    public UserModel(String username, String password, List<RoleModel> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
     }
     
     @Override

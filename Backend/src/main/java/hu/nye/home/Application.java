@@ -13,3 +13,9 @@ public class Application {
     
   }
 }
+
+/*
+  2025.01.06: A felhasználóhoz tartozó CRUD endpointok működnek.
+  A GameDescription Entity módosítva lesz oly módon,
+  hogy a GameDescription rész és az Image rész össze lesz olvaszva.
+ */

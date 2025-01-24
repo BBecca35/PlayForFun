@@ -7,9 +7,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+//https://github.com/hello-iftekhar/springJwt/blob/main/src/main/java/com/helloIftekhar/springJwt/service/JwtService.java
 
 @RestController
+@RequestMapping("/user-api")
 public class UserController {
     
     private final UserServiceInterface userService;
@@ -19,11 +20,11 @@ public class UserController {
         this.userService = userService;
     }
     
-    
     @PostMapping("/register")
     public UserModel addNewUser(@RequestBody UserDto userDto){
         return userService.saveUser(userDto);
     }
+    
     
     @GetMapping("/user/{id}")
     public UserModel getUserById(@PathVariable("id") Long id){
@@ -35,7 +36,7 @@ public class UserController {
         return userService.updateUser(id, dto);
     }
     
-    @DeleteMapping("/games/{id}")
+    @DeleteMapping("/user/{id}")
     public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
     }

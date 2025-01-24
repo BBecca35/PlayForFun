@@ -1,6 +1,7 @@
 package hu.nye.home.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,14 +26,11 @@ public class GameDescriptionModel {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private UserModel user;
     
-    @OneToMany(mappedBy = "game_description", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "gameDescription", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments = new ArrayList<>();
-    
-    @OneToOne
-    @JoinColumn(name = "image_id", referencedColumnName = "id")
-    private ImageModel image;
     
     @Column(nullable = false, unique = true)
     private String name;
@@ -47,43 +45,17 @@ public class GameDescriptionModel {
     private String platform;
     
     @Column(nullable = false)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("published_at")
-    private LocalDate publishedAt;
+    private int publishedAt;
     
     @Column(nullable = false)
     private int ageLimit;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 3000)
     private String description;
     
-    @Override
-    public String toString() {
-        return "GameDescriptionModel{" +
-                 "name='" + name + '\'' +
-                 ", genre='" + genre + '\'' +
-                 ", publisher='" + publisher + '\'' +
-                 ", platform='" + platform + '\'' +
-                 ", publishedAt=" + publishedAt +
-                 ", ageLimit=" + ageLimit +
-                 ", description='" + description + '\'' +
-                 '}';
-    }
+    private String imagePath;
+    private String imageName;
+    private String imageType;
     
-    /*
-    public GameDescriptionModel(ImageModel image, UserModel user,
-                                String name, String genre, String publisher,
-                                String platform, LocalDate publishedAt, int ageLimit,
-                                String description) {
-        this.image = image;
-        this.user = user;
-        this.name = name;
-        this.genre = genre;
-        this.publisher = publisher;
-        this.platform = platform;
-        this.publishedAt = publishedAt;
-        this.ageLimit = ageLimit;
-        this.description = description;
-    }
-     */
 }

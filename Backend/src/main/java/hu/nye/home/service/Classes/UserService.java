@@ -1,26 +1,52 @@
 package hu.nye.home.service.Classes;
 
 import hu.nye.home.dto.UserDto;
+import hu.nye.home.entity.RoleModel;
 import hu.nye.home.entity.UserModel;
 import hu.nye.home.exception.EmailIsExistException;
 import hu.nye.home.exception.UserNotFoundException;
 import hu.nye.home.exception.UsernameIsExistException;
+import hu.nye.home.repository.RoleRepository;
 import hu.nye.home.repository.UserRepository;
+import hu.nye.home.security.CustomUserDetailsService;
 import hu.nye.home.service.Interfaces.UserServiceInterface;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserServiceInterface {
     
     private final UserRepository userRepository;
+    private final CustomUserDetailsService userDetailsService;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
     
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CustomUserDetailsService userDetailsService,
+                       RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.userDetailsService = userDetailsService;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userDetailsService.loadUserByUsername(username);
+    }
     
     @Override
     @SneakyThrows
@@ -28,29 +54,38 @@ public class UserService implements UserServiceInterface {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
     
+    private UserModel convertToEntity(UserDto dto, RoleModel roles) {
+        UserModel user = new UserModel();
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setBirthDate(dto.getBirthDate());
+        user.setRoles(Collections.singletonList(roles));
+        return user;
+    }
+    
     @Override
     @SneakyThrows
     public UserModel saveUser(UserDto dto) {
-        UserModel user = new UserModel();
-        
         if (dto == null) {
-            throw new NullPointerException("Userdto cannot be null!");
-        } else {
-            String findUsername = userRepository.findUserName(dto.getUsername());
-            String findEmail = userRepository.findEmail(dto.getEmail());
-            if (findUsername != null) {
-                throw new UsernameIsExistException();
-            } else if (findEmail != null) {
-                throw new EmailIsExistException();
-            } else {
-                user.setUsername(dto.getUsername());
-                user.setEmail(dto.getEmail());
-                user.setPassword(dto.getPassword());
-                user.setBirthDate(dto.getBirthDate());
-                userRepository.save(user);
-                return user;
-            }
+            throw new NullPointerException("UserDto cannot be null!");
         }
+        
+        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
+            throw new UsernameIsExistException();
+        }
+        
+        if (userRepository.findByEmail(dto.getEmail()) != null) {
+            throw new EmailIsExistException();
+        }
+        
+        RoleModel roles = roleRepository.findByName("USER")
+                            .orElseThrow(() ->
+                                           new IllegalStateException("Role 'USER' " +
+                                                                       "not found in the database!"));
+        
+        UserModel user = convertToEntity(dto, roles);
+        return userRepository.save(user);
     }
     
     @Override
@@ -65,7 +100,11 @@ public class UserService implements UserServiceInterface {
     }
     
     @Override
+    @SneakyThrows
     public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException();
+        }
         userRepository.deleteById(id);
     }
     

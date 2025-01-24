@@ -3,6 +3,7 @@ package hu.nye.home.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import hu.nye.home.entity.GameDescriptionModel;
+import hu.nye.home.entity.RoleModel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -36,11 +37,17 @@ public class UserDto {
     @NotNull
     private String password;
     
-    @NotEmpty
     @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("birthdate")
     private LocalDate birthDate;
     
     private LocalDateTime createdAt;
     private List<GameDescriptionModel> gameDescriptions;
+    private List<RoleModel> roles;
     
+    public UserDto(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }

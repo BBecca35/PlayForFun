@@ -3,6 +3,8 @@ package hu.nye.home.service.Interfaces;
 import hu.nye.home.dto.UserDto;
 import hu.nye.home.entity.UserModel;
 
+import java.util.Optional;
+
 
 public interface UserServiceInterface {
     

@@ -1,10 +1,6 @@
 package hu.nye.home.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import hu.nye.home.entity.ImageModel;
-import hu.nye.home.entity.UserModel;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -23,6 +19,8 @@ public class GameDescriptionDto {
     
     private Long id;
     
+    private Long userId;
+    
     @NotEmpty
     @NotNull
     private String name;
@@ -39,11 +37,10 @@ public class GameDescriptionDto {
     @NotNull
     private String platform;
     
-    @NotEmpty
     @NotNull
-    private LocalDate publishedAt;
+    @Positive
+    private int publishedAt;
     
-    @NotEmpty
     @NotNull
     @Positive
     private int ageLimit;
@@ -51,5 +48,17 @@ public class GameDescriptionDto {
     @NotEmpty
     @NotNull
     private String description;
+    
+    @NotEmpty
+    @NotNull
+    private String imageName;
+    
+    @NotEmpty
+    @NotNull
+    private String imagePath;
+    
+    @NotEmpty
+    @NotNull
+    private String imageType;
     
 }
