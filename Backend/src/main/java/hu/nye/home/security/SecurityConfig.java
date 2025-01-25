@@ -55,6 +55,7 @@ public class SecurityConfig {
                                            .requestMatchers("/api/auth/**").permitAll()
                                            .requestMatchers("/user-api/**").permitAll()
                                            .requestMatchers("/gd-api/**").permitAll()
+                                           .requestMatchers("/api/images/**").permitAll()
                                            .anyRequest().authenticated()
           )
           .httpBasic(httpBasic -> {});

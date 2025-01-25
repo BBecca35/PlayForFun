@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class GameDescriptionService implements GameDescriptionServiceInterface {
     
+    private static final String IMAGES_FOLDER = "C:/apache-tomcat-9.0.39/webapps/ROOT/images/";
     private final GameDescriptionRepository gameDescriptionRepository;
     private final UserRepository userRepository;
     private final FileService imageService;
@@ -70,9 +71,9 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
         gameDescription.setUser(user);
         
         if (imageFile != null && !imageFile.isEmpty()) {
-            String filePath = imageService.saveFileToFileSystem(imageFile);
-            gameDescription.setImageName(imageFile.getOriginalFilename());
-            gameDescription.setImagePath(filePath);
+            String imageName = imageService.saveFileToFileSystem(imageFile);
+            gameDescription.setImageName(imageName);
+            gameDescription.setImagePath(IMAGES_FOLDER + imageName);
             gameDescription.setImageType(imageFile.getContentType());
         }
         
@@ -99,9 +100,9 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
                 imageService.deleteFileFromFileSystem(gameDescription.getImagePath());
             }
             
-            String filePath = imageService.saveFileToFileSystem(imageFile);
-            gameDescription.setImageName(imageFile.getOriginalFilename());
-            gameDescription.setImagePath(filePath);
+            String imageName = imageService.saveFileToFileSystem(imageFile);
+            gameDescription.setImageName(imageName);
+            gameDescription.setImagePath(IMAGES_FOLDER + imageName);
             gameDescription.setImageType(imageFile.getContentType());
         }
         
@@ -124,10 +125,6 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
         UserModel user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         GameDescriptionModel gameDescription = gameDescriptionRepository.findById(gameDescriptionId)
                                                  .orElseThrow(GameDescriptionNotFoundException::new);
-        
-        if (!gameDescription.getUser().getId().equals(user.getId())) {
-            throw new GameDescriptionIsExistException();
-        }
         
         if (gameDescription.getImagePath() != null) {
             imageService.deleteFileFromFileSystem(gameDescription.getImagePath());
