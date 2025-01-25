@@ -2,9 +2,8 @@ import React from 'react';
 import './AddNewDescription.css';
 import placeholder from '../Assets/placeholder.png';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axios';
-
-//
 
 export default function AddNewDescription() {
    
@@ -16,6 +15,7 @@ export default function AddNewDescription() {
     const [platform, setPlatform] = useState('');
     const [ageLimit, setAgeLimit] = useState('');
     const [image, setImage] = useState(placeholder);
+    const navigate = useNavigate();
 
     const generateYearOptions = () => {
         const currentYear = new Date().getFullYear();
@@ -49,15 +49,15 @@ export default function AddNewDescription() {
         const CREATE_NEW_DESCRIPTION_URL = `/gd-api/user/${userIdLong}/gameDescriptions`
 
         const formData = new FormData();
-        formData.append("dto", JSON.stringify({
-            gameName: gameName,
-            publisher: publisher,
-            description: description,
+        formData.append("dto", new Blob ([JSON.stringify({
+            name: gameName,
             genre: genre,
-            publicationYear: publicationYearInt,
+            publisher: publisher,
             platform: platform,
-            ageLimit: ageLimitInt
-        }));
+            publishedAt: publicationYearInt,
+            ageLimit: ageLimitInt,
+            description: description
+        })], {type: "application/json"}));
 
         if (image && image !== placeholder) {
             // Csak akkor adjuk hozzá a fájlt, ha van tényleges fájl
@@ -85,12 +85,11 @@ export default function AddNewDescription() {
         try {
             const response = await axiosInstance.post(
                 CREATE_NEW_DESCRIPTION_URL, 
-                formData,
-                { headers: { 'Content-Type': 'multipart/form-data' } }
+                formData
             );
             const { Id } = response.data;
             localStorage.setItem('gdId', Id);
-            alert('Sikeres feltöltés!');            
+            navigate("/my-game-descriptions");         
     
         } catch (error) {
             if(error.response){
