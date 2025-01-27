@@ -54,6 +54,7 @@
     border: 3px solid white;
 }
 
+
 input[type="file"] {
     display: none;
 }
@@ -201,6 +202,11 @@ label[name="age-limit-text"]{
     display: flex;
 }
 
+.buttons-container{
+    display: flex;
+    flex-direction: row;
+}
+
 .saving-button {
     color: white;
     font-weight: bold;
@@ -217,6 +223,22 @@ label[name="age-limit-text"]{
 
 .saving-button:hover{
     background-color: #228FCB;
+}
+
+.delete-button {
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 10px;
+    background-color: #de2b2b; 
+    padding: 7px 20px;
+    border: none;
+    transition: background-color 0.3s;
+    position: relative;
+}
+
+.delete-button:hover{
+    background-color: #ad2323;
 }
 
 

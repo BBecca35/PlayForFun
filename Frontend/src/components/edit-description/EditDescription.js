@@ -1,12 +1,14 @@
 import React from 'react';
-import './AddNewDescription.css';
+import './EditDescription.css';
 import placeholder from '../Assets/placeholder.png';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../api/axios';
 
-export default function AddNewDescription() {
+export default function EditDescription() {
    
+    const { id } = useParams(); // Játékleírás ID-jének lekérése az URL-ből
+
     const [gameName, setGameName] = useState('');
     const [publisher, setPublisher] = useState('');
     const [description, setDescription] = useState('');
@@ -16,6 +18,31 @@ export default function AddNewDescription() {
     const [ageLimit, setAgeLimit] = useState('');
     const [image, setImage] = useState(placeholder);
     const navigate = useNavigate();
+
+
+    useEffect(() => {
+        const fetchGameDescription = async () => {
+            try {
+                const response = await axiosInstance.get(`/gd-api/gameDescriptions/${id}`);
+                const data = response.data;
+                setGameName(data.name);
+                setPublisher(data.publisher);
+                setDescription(data.description);
+                setGenre(data.genre);
+                setPublicationYear(data.publishedAt.toString());
+                setPlatform(data.platform);
+                setAgeLimit(data.ageLimit.toString());
+                if (data.imageName) {
+                    const imageUrl = `http://localhost:8080/api/images/${data.imageName}`;
+                    setImage(imageUrl);
+                }
+            } catch (error) {
+                console.error("Hiba történt az adatok betöltésekor: ", error);
+            }
+        };
+
+        fetchGameDescription();
+    }, [id]);
 
     const generateYearOptions = () => {
         const currentYear = new Date().getFullYear();
@@ -46,21 +73,7 @@ export default function AddNewDescription() {
         const publicationYearInt = parseInt(publicationYear, 10);
         const ageLimitInt = parseInt(ageLimit, 10);
         const userIdLong = userId ? Number(userId) : null;
-        const CREATE_NEW_DESCRIPTION_URL = `/gd-api/user/${userIdLong}/gameDescriptions`
-
-        if (e.target.type === "file") {
-            return;
-        }
-
-        if (!gameName.trim() || !publisher.trim() || !description.trim() ) {
-            alert("Az összes mezőt ki kell tölteni!");
-            return;
-        }
-
-        if(ageLimit === '' || publicationYear === '' || platform === '' || genre === ''){
-            alert("Az összes mezónél válasszon egy elemet!");
-            return;            
-        }
+        const EDIT_DESCRIPTION_URL = `gd-api/user/${userIdLong}/gameDescriptions/${id}`
 
         const formData = new FormData();
         formData.append("dto", new Blob ([JSON.stringify({
@@ -82,9 +95,23 @@ export default function AddNewDescription() {
             }
         }
 
+        if (e.target.type === "file") {
+            return;
+        }
+
+        if (!gameName.trim() || !publisher.trim() || !publisher.trim() ) {
+            alert("Az összes mezőt ki kell tölteni!");
+            return;
+        }
+
+        if(ageLimit === '' || publicationYear === '' || platform === '' || genre === ''){
+            alert("Az összes mezónél válasszon egy elemet!");
+            return;            
+        }
+
         try {
-            const response = await axiosInstance.post(
-                CREATE_NEW_DESCRIPTION_URL, 
+            const response = await axiosInstance.put(
+                EDIT_DESCRIPTION_URL, 
                 formData
             );
             navigate("/my-game-descriptions");         
@@ -104,11 +131,36 @@ export default function AddNewDescription() {
 
     }
 
+    const handleDelete = async () => {
+        const confirmDelete = window.confirm("Biztosan törölni szeretnéd ezt a játékleírást?");
+        if (confirmDelete) {
+            try {
+                const DELETE_URL = `/gd-api/gameDescriptions/${id}`;
+                await axiosInstance.delete(
+                    DELETE_URL, 
+                );
+                navigate("/my-game-descriptions");         
+        
+            } catch (error) {
+                if(error.response){
+                    const { status, data } = error.response;
+                    console.error(`Hiba történt: ${status} - ${data.error}`);
+                    if (status === 404) {
+                        alert("Az adott játékleírás nem létezik!");  
+                    } else {
+                        alert(`Ismeretlen hiba: ${status} - ${data.error}`);
+                    }
+                }
+                console.error("Hiba történt: ", error.message);
+            }
+        }
+    };
+
     return (
         <form className="new-description-container" onSubmit={handleSaving}>
             <div className='title-container'>
                 <p className="new-description-title">
-                    Új leírás létrehozása
+                    Leírás szerkesztése
                 </p>
                 <hr className='new-description-line'/>
             </div>
@@ -238,8 +290,9 @@ export default function AddNewDescription() {
                         />
                     </div>
 
-                    <div className='saving-button-container'>
-                        <button type='submit' className='saving-button'>Mentés</button>
+                    <div className='buttons-container'>
+                        <button className='delete-button' onClick={handleDelete}>Törlés</button>
+                        <button type='submit' className='saving-button'>Módosítások mentése</button>
                     </div>
 
                 </div>

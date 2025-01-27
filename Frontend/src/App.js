@@ -6,8 +6,10 @@ import Login from './components/login/Login';
 import Navbar from './components/navbar/navbar';
 import Register from './components/register/Register';
 import Home from './components/home/Home';
-import MyGameDescriptions from './components/MyGameDescriptions/MyGameDescriptions';
+import MyGameDescriptions from './components/my-game-descriptions/MyGameDescriptions';
 import AddNewDescripion from './components/add-new-description/AddNewDescription';
+import EditDescription from './components/edit-description/EditDescription';
+import Description from './components/description/Description';
 
 function App() {
   
@@ -65,7 +67,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/add-new-description" element={isLoggedIn ? <AddNewDescripion /> : <Navigate to="/login" replace />} />
           <Route path="/my-game-descriptions" element={isLoggedIn ? <MyGameDescriptions /> : <Navigate to="/login" replace />} />
-
+          <Route path="/edit-description/:id" element={isLoggedIn ? <EditDescription /> : <Navigate to="/login" replace />} />
+          <Route path="/description/:id" element={isLoggedIn ? <Description /> : <Navigate to="/login" replace />} />
           <Route 
             path="/home" 
             element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}

@@ -1,17 +1,17 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api/axios';
-import './Home.css';
+import './MyGameDescriptions.css';
 
-export default function Home() {
+export default function MyGameDescriptions() {
     const [cells, setCells] = useState([]);
-    //const navigate = useNavigate();
-    const FETCH_GAME_DESCRIPTIONS_URL = `/gd-api/gameDescriptions`; 
-    const [IsArrayEmpty, setIsArrayEmpty] = useState(false);
+    const userId = localStorage.getItem('userId');
+    const userIdLong = userId ? Number(userId) : null;
     const navigate = useNavigate();
+    const FETCH_GAME_DESCRIPTIONS_URL = useMemo(() => {
+        return `/gd-api/user/${userIdLong}/gameDescriptions`;
+    }, [userIdLong]); 
 
-    
     useEffect(() => {
         const fetchGameDescriptions = async () => {
             try {
@@ -29,42 +29,37 @@ export default function Home() {
         };
     
         fetchGameDescriptions();
-    }, [FETCH_GAME_DESCRIPTIONS_URL]);
+    }, [FETCH_GAME_DESCRIPTIONS_URL]); // Csak a komponens betöltésekor fut le
 
-    useEffect(() => {
-        if (cells.length === 0) {
-            setIsArrayEmpty(true);
-        } else {
-            setIsArrayEmpty(false);
-        }
-    }, [cells]); // cells változása esetén fut le
-    
-    const handleEdit = (id) => {
-        navigate(`/description/${id}`); // Navigálás a szerkesztő oldalra az ID-vel
+    const addCell = () => {
+        navigate("/add-new-description");
     };
 
+    const handleEdit = (id) => {
+        navigate(`/edit-description/${id}`); // Navigálás a szerkesztő oldalra az ID-vel
+    };
+    
     return (
-        <div className="home-container">
+        <form className="my-game-decriptions-container">
             <div className="home-content">
-                <input type="text" className="search-bar" placeholder="Keresés" />
-                {IsArrayEmpty && (
-                    <p className="no-description">
-                        Játékleírás még nem lett létrehozva egy felhasználó által sem!
-                    </p>
-                )}
-                
-                {!IsArrayEmpty && (
-                    <div className="dynamic-table">
+                <p className="my-description-text">
+                    Játékleírásaim
+                </p> <hr className='line'/>
+
+                <div className="dynamic-table">
                     {cells.map((cell) => (
                         <div className="gd-container" key={cell.id} onClick={() => handleEdit(cell.id)}>
                             <img src={cell.imageUrl} alt="" className='gd-image' id='gd-image'/>
                             <label for="gd-image" name='gd-title'>{cell.title}</label>
                         </div>
                     ))}
+                    <div className="add-new-description-container" onClick={addCell}>
+                        <p className='add-icon' id="add-card">+</p>
+                        <label for="add-card" name="add-text">Új leírás létrehozása</label>
                     </div>
-                )}
 
+                </div>
             </div>
-        </div>
+        </form>
     );
 }
