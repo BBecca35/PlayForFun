@@ -69,11 +69,10 @@ public class GameDescriptionController {
     }
     
     //Lekér egy adott leírást id alapján, ami majd a játék leírás betöltésnél lesz hasznos
-    @GetMapping("/user/{userId}/gameDescriptions/{id}")
+    @GetMapping("/gameDescriptions/{id}")
     public ResponseEntity<GameDescriptionDto> getGameDescriptionById(
-      @PathVariable(value = "userId") Long userId,
       @PathVariable(value = "id") Long gameDescriptionId) {
-        GameDescriptionDto dto = gameDescriptionService.getGameDescriptionById(userId, gameDescriptionId);
+        GameDescriptionDto dto = gameDescriptionService.getGameDescriptionById(gameDescriptionId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
     
@@ -101,10 +100,9 @@ public class GameDescriptionController {
         return new ResponseEntity<>(updatedGameDescription, HttpStatus.OK);
     }
     
-    @DeleteMapping("/user/{userId}/gameDescriptions/{id}")
-    public ResponseEntity<String> deleteGameDescription(@PathVariable(value = "userId") Long userId,
-                                                        @PathVariable(value = "id") Long gameDescriptionId) {
-        gameDescriptionService.deleteGameDescription(userId, gameDescriptionId);
+    @DeleteMapping("/gameDescriptions/{id}")
+    public ResponseEntity<String> deleteGameDescription(@PathVariable(value = "id") Long gameDescriptionId) {
+        gameDescriptionService.deleteGameDescription(gameDescriptionId);
         return new ResponseEntity<>("Game description deleted successfully", HttpStatus.OK);
     }
     

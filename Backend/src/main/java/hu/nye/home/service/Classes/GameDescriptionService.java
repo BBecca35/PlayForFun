@@ -46,14 +46,10 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
     
     @Override
     @SneakyThrows
-    public GameDescriptionDto getGameDescriptionById(Long userId, Long gameDescriptionId) {
-        UserModel user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public GameDescriptionDto getGameDescriptionById(Long gameDescriptionId) {
         GameDescriptionModel gameDescription = gameDescriptionRepository.
                                                  findById(gameDescriptionId).
                                                  orElseThrow(GameDescriptionNotFoundException::new);
-        if(gameDescription.getUser().getId() != user.getId()){
-            throw new GameDescriptionNotFoundException();
-        }
         return mapToDto(gameDescription);
     }
     
@@ -121,8 +117,7 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
     
     @Override
     @SneakyThrows
-    public void deleteGameDescription(Long gameDescriptionId, Long userId) {
-        UserModel user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public void deleteGameDescription(Long gameDescriptionId) {
         GameDescriptionModel gameDescription = gameDescriptionRepository.findById(gameDescriptionId)
                                                  .orElseThrow(GameDescriptionNotFoundException::new);
         

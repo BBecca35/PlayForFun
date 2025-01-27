@@ -17,14 +17,14 @@ import java.util.List;
 public interface GameDescriptionServiceInterface {
     
     List<GameDescriptionDto> getGameDescriptionsByUserId(Long id);
-    GameDescriptionDto getGameDescriptionById(Long userId, Long gameDescriptionId);
+    GameDescriptionDto getGameDescriptionById(Long gameDescriptionId);
     List<GameDescriptionDto> getAllGameDescription();
     
     GameDescriptionDto saveGameDescription(Long userId, GameDescriptionDto dto,
                                            MultipartFile imageFile);
     GameDescriptionDto updateGameDescription(Long gameDescriptionId, Long userId,
                                              GameDescriptionDto dto, MultipartFile imageFile);
-    void deleteGameDescription(Long gameDescriptionId, Long userId);
+    void deleteGameDescription(Long gameDescriptionId);
     
     List<GameDescriptionDto> getAllByGenre(String genre);
     List<GameDescriptionDto> getAllByPlatform(String platform);
