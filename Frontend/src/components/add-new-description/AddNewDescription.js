@@ -117,23 +117,23 @@ export default function AddNewDescription() {
                 <div className='image-container'>
                     <img className='image-placeholder' src={image} alt='placeholer' onChange={handleImage}></img>
                     <div className='browse-button'>
-                        <label for='myfile'>Tallózás</label>
+                        <label for='myfile' className='browse-button-text'>Tallózás</label>
                         <input type="file" id='myfile' className="myfile" onChange={handleImage}/>    
                     </div> 
                 </div>
                 <div className='text-inputs'>
                     <div className='first-row'>
-                        <input className='game-title'
+                        <input className='write-game-title'
                             type='text' 
-                            name='game-title' 
+                            name='write-game-title' 
                             placeholder='A játék neve'
                             value={gameName}
                             onChange={(e) => setGameName(e.target.value)} 
                         />
 
-                        <input className='publisher'
+                        <input className='write--publisher'
                             type='text' 
-                            name='publisher' 
+                            name='write-publisher' 
                             placeholder='A Kiadó neve'
                             value={publisher}
                             onChange={(e) => setPublisher(e.target.value)} 
@@ -143,9 +143,9 @@ export default function AddNewDescription() {
                     <div className='second-row'>
                         <div className='genre-container'>
                             <label for="genre" name="genre-text">A játék műfaja</label>
-                            <select className='genre'
+                            <select className='write-genre'
                                 id='genre'
-                                name='genre'
+                                name='write-genre'
                                 placeholder="A játék műfaja" 
                                 value={genre}
                                 onChange={(e) => setGenre(e.target.value)} 
@@ -155,7 +155,7 @@ export default function AddNewDescription() {
                                 <option value="kaland">Kaland</option>
                                 <option value="harc">Harc</option>
                                 <option value="verseny">Verseny</option>
-                                <option value="rpg">RPG</option>
+                                <option value="RPG">RPG</option>
                                 <option value="szimuláció">Szimuláció</option>
                                 <option value="Parlor">Parlor</option>
                                 <option value="MMO">MMO</option>
@@ -166,9 +166,9 @@ export default function AddNewDescription() {
                         
                         <div className='publication-year-container'>
                             <label for="publication-year" name="publication-year-text">A kiadás éve</label>
-                            <select className='publication-year'
+                            <select className='write--publication-year'
                                 id='publication-year'
-                                name='publication-year'
+                                name='write-publication-year'
                                 placeholder="A kiadás éve" 
                                 value={publicationYear}
                                 onChange={(e) => setPublicationYear(e.target.value)} 
@@ -185,45 +185,45 @@ export default function AddNewDescription() {
                     <div className='third-row'>
                         <div className='platform-container'>
                             <label for="platform" name="platform-text">Platform</label>
-                            <select className='platform'
+                            <select className='write-platform'
                                 id='platform'
-                                name='platform'
+                                name='write-platform'
                                 placeholder="Platform" 
                                 value={platform}
                                 onChange={(e) => setPlatform(e.target.value)} 
                             >
                                 <option value="">-- Választás --</option>
-                                <option value="pc">PC</option>
-                                <option value="pc,ios">PC, IOS</option>
-                                <option value="pc,android,ios">PC, Android, IOS</option>
-                                <option value="pc,ios,xbox">PC, IOS, XBOX</option>
-                                <option value="pc,ios,ps5">PC, IOS, PS5</option>
-                                <option value="pc,ps5">PC, PS5</option>
-                                <option value="pc,xbox">PC, XBOX</option>
-                                <option value="pc,xbox,ps5">PC, XBOX, PS5</option>
-                                <option value="pc,nintendo,ios">PC, Nintento, IOS</option>
-                                <option value="pc,nintendo,xbox,ps5">PC, Nintento, XBOX, PS5</option>
-                                <option value="pc,nintendo,ios,xbox,ps5">PC, Nintento, XBOX, PS5, IOS</option>
-                                <option value="pc,ps5,xbox,ios,android,nintento">PC, PS5, XBOX, IOS, Andriod, Nintendo</option>
+                                <option value="PC">PC</option>
+                                <option value="PC, IOS">PC, IOS</option>
+                                <option value="PC, Android, IOS">PC, Android, IOS</option>
+                                <option value="PC, IOS, XBOX">PC, IOS, XBOX</option>
+                                <option value="PC, IOS, PlayStation">PC, IOS, PlayStation</option>
+                                <option value="PC, PlayStation">PC, PlayStation</option>
+                                <option value="PC, XBOX">PC, XBOX</option>
+                                <option value="PC, XBOX, PlayStation">PC, XBOX, PlayStation</option>
+                                <option value="PC, Nintendo, IOS">PC, Nintendo, IOS</option>
+                                <option value="PC, Nintendo, XBOX, PlayStation">PC, Nintendo, XBOX, PlayStation</option>
+                                <option value="PC, Nintendo, XBOX, PlayStation, IOS">PC, Nintendo, XBOX, PlayStation, IOS</option>
+                                <option value="PC, PlayStation, XBOX, IOS, Andriod, Nintendo">PC, PlayStation, XBOX, IOS, Andriod, Nintendo</option>
 
                             </select>
                         </div>
                         
                         <div className='age-limit-container'>
                             <label for="age-limit" name="age-limit-text">Korhatár besorolás</label>
-                            <select className='age-limit'
+                            <select className='write-age-limit'
                                 id='age-limit'
-                                name='age-limit'
+                                name='write-age-limit'
                                 placeholder="Korhatár besorolás" 
                                 value={ageLimit}
                                 onChange={(e) => setAgeLimit(e.target.value)} 
                             >
                                 <option value="">-- Választás --</option>
-                                <option value="3">3</option>
-                                <option value="7">7</option>
-                                <option value="12">12</option>
-                                <option value="16">16</option>
-                                <option value="18">18</option>
+                                <option value="3">PEGI 3</option>
+                                <option value="7">PEGI 7</option>
+                                <option value="12">PEGI 12</option>
+                                <option value="16">PEGI 16</option>
+                                <option value="18">PEGI 18</option>
                             </select>
                         </div>
                     </div>
@@ -231,7 +231,7 @@ export default function AddNewDescription() {
                     <div className='last-row'>
                         <textarea className='description-text'
                             type='text' 
-                            name='description' 
+                            name='write-description' 
                             placeholder='Leírás'
                             value={description}
                             onChange={(e) => setDescription(e.target.value)} 

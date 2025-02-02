@@ -81,6 +81,11 @@ input[type="file"] {
 
 }
 
+.browse-button-text{
+    font-size: 17px;
+    cursor: pointer;
+}
+
 .text-inputs{
     display: flex;
     flex-direction: column;
@@ -97,21 +102,32 @@ input[type="file"] {
     margin-top: 0.5vh;
 }
 
-input[name='game-title'], input[name='publisher']{
+input[name='edit-game-title']{
     padding: 8px 8px;
     width: 20vw;
     position: relative;
-    
-    
+    margin-right: auto;
+    font-size: 18px;
+
+       
 }
 
-textarea[name='description']{
+input[name='edit-publisher']{
+    padding: 8px 8px;
+    width: 20vw;
+    position: relative;
+    margin-left: auto;
+    font-size: 18px;
+}
+
+textarea[name='edit-description']{
     padding: 8px 8px;
     justify-content: start;
     border-radius: 5px;
     height: 120px;
     gap:6vw;
     width: 100%;
+    font-size: 18px;
     resize: none; 
     position: relative;
 }
@@ -129,13 +145,17 @@ textarea[name='description']{
     flex-direction: column;
     height: fit-content;
     width: 20vw;
+    margin-right: auto;
 }
-select[name="genre"]{
+
+select[name="edit-genre"]{
     display: flex;
     padding: 8px;
     padding-left: 10px;
     padding-right: 20px;
     position: relative;
+    font-size: 18px;
+    
 }
 
 label[name="genre-text"]{
@@ -148,11 +168,13 @@ label[name="genre-text"]{
     flex-direction: column;
     height: fit-content;
     width: 20vw;
+    margin-left: auto;
 }
-select[name="publication-year"]{
+select[name="edit-publication-year"]{
     display: flex;
     padding: 8px 8px;
     position: relative;
+    font-size: 18px;
 }
 
 label[name="publication-year-text"]{
@@ -173,14 +195,17 @@ label[name="publication-year-text"]{
     flex-direction: column;
     height: fit-content;
     width: 20vw;
+    margin-right: auto;
 }
-select[name="platform"]{
+
+select[name="edit-platform"]{
     display: flex;
     padding: 8px 8px;
     position: relative;
+    font-size: 18px;
 }
 
-label[name="platform-text"]{
+label[name="edit-platform-text"]{
     font-size: 20px;
     display: flex;
 }
@@ -190,14 +215,16 @@ label[name="platform-text"]{
     flex-direction: column;
     height: fit-content;
     width: 20vw;
+    margin-left: auto;
 }
-select[name="age-limit"]{
+select[name="edit-age-limit"]{
     display: flex;
     padding: 8px 8px;
     position: relative;
+    font-size: 18px;
 }
 
-label[name="age-limit-text"]{
+label[name="edit-age-limit-text"]{
     font-size: 20px;
     display: flex;
 }

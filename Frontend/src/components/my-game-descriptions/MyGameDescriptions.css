@@ -59,6 +59,7 @@ label[name="gd-title"]{
 .gd-image{
   display: flex;
   width: 100%;
+  cursor: pointer;
   height: 300px;
   border: none;
   border-radius: 10px;

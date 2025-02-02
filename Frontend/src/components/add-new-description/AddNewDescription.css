@@ -67,7 +67,18 @@ input[type="file"] {
     color: white;
     display: block;
     margin: 20px 40px;
+    transition: background-color 0.3s;
+    cursor: pointer;
     justify-items: center;
+}
+
+.browse-button:hover{
+    background-color: #228FCB;
+}
+
+.browse-button-text{
+    font-size: 17px;
+    cursor: pointer;
 }
 
 .myfile{
@@ -96,19 +107,29 @@ input[type="file"] {
     margin-top: 0.5vh;
 }
 
-input[name='game-title'], input[name='publisher']{
+input[name='write-game-title']{
     padding: 8px 8px;
     width: 20vw;
+    font-size: 18px;
     position: relative;
-    
-    
+    margin-right: auto;
+
 }
 
-textarea[name='description']{
+input[name='write-publisher']{
+    padding: 8px 8px;
+    width: 20vw;
+    font-size: 18px;
+    position: relative;
+    margin-left: auto;
+}
+
+textarea[name='write-description']{
     padding: 8px 8px;
     justify-content: start;
     border-radius: 5px;
     height: 120px;
+    font-size: 18px;
     gap:6vw;
     width: 100%;
     resize: none; 
@@ -127,11 +148,13 @@ textarea[name='description']{
     display: flex;
     flex-direction: column;
     height: fit-content;
+    margin-right: auto;
     width: 20vw;
 }
-select[name="genre"]{
+select[name="write-genre"]{
     display: flex;
     padding: 8px;
+    font-size: 18px;
     padding-left: 10px;
     padding-right: 20px;
     position: relative;
@@ -146,11 +169,13 @@ label[name="genre-text"]{
     display: flex;
     flex-direction: column;
     height: fit-content;
+    margin-left: auto;
     width: 20vw;
 }
-select[name="publication-year"]{
+select[name="write-publication-year"]{
     display: flex;
     padding: 8px 8px;
+    font-size: 18px;
     position: relative;
 }
 
@@ -171,11 +196,13 @@ label[name="publication-year-text"]{
     display: flex;
     flex-direction: column;
     height: fit-content;
+    margin-right: auto;
     width: 20vw;
 }
-select[name="platform"]{
+select[name="write-platform"]{
     display: flex;
     padding: 8px 8px;
+    font-size: 18px;
     position: relative;
 }
 
@@ -189,9 +216,11 @@ label[name="platform-text"]{
     flex-direction: column;
     height: fit-content;
     width: 20vw;
+    margin-left: auto;
 }
-select[name="age-limit"]{
+select[name="write-age-limit"]{
     display: flex;
+    font-size: 18px;
     padding: 8px 8px;
     position: relative;
 }
