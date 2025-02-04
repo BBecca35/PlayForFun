@@ -8,10 +8,9 @@ import { faFilter, faStar, faMagnifyingGlass, faXmark } from '@fortawesome/free-
 
 export default function Home() {
     const [cells, setCells] = useState([]);
-    //const navigate = useNavigate();
     const FETCH_GAME_DESCRIPTIONS_URL = `/gd-api/gameDescriptions`; 
     const [IsArrayEmpty, setIsArrayEmpty] = useState(false);
-    const [isFilterOpen, setIsFilterOpen] = useState(false); // Dropdown állapot
+    const [isFilterOpen, setIsFilterOpen] = useState(false); 
     const navigate = useNavigate();
     const [rating, setRating] = useState(null);
     const [hover, setHover] = useState(null);
@@ -74,7 +73,7 @@ export default function Home() {
         
             fetchGameDescriptions();
         }
-    }, [FETCH_GAME_DESCRIPTIONS_URL, isFiltering, notFoundDescription, resetTrigger]);
+    }, [FETCH_GAME_DESCRIPTIONS_URL, isFiltering, notFoundDescription, resetTrigger, isMatching]);
 
     useEffect(() => {
         if (cells.length === 0) {
@@ -313,14 +312,11 @@ export default function Home() {
     } 
 
     const resetSorting = async () => {
-        // Szűrőfeltételek visszaállítása alapértelmezett értékekre
-        // UI elemek visszaállítása
         setSelected1("-- Választás --");
         setSelected2("-- Választás --");
         setIsFilterStateEmpty(false);
         setIsFiltering(false);   
     
-        // Összes játékleírás újra lekérése
     };
 
     const handleSearching = async (e) => {

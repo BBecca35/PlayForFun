@@ -1,0 +1,205 @@
+/* Általános stílusok */
+.main-content {
+    font-family: Arial, sans-serif;
+    background-color: #127BA3;
+    color: white;
+    width: fit-content;
+    position: relative;
+    justify-content: center;
+    margin-top: 20px;
+    display: flex;
+    padding-top: 60px;
+
+  }
+  
+.settings-container{
+    width: 75vw;    
+    display: flex;
+    flex-direction: column;
+}
+  /* Home content */
+  
+.settings-text {
+    display: flex;
+    position: relative;
+    margin-right: auto;
+    margin-left: 1vw;
+    font-size: 48px;
+    top: 20px;
+    font-weight: bold;
+}
+  
+.settings-line{
+    position: relative;
+    width:100%; 
+    height:5px; 
+    background: white; 
+    opacity: 100%;
+}
+
+.change-password-text,
+.change-email-text{
+    display: flex;
+    width: fit-content;
+    margin-top: 20px;
+    font-size: 30px;
+    margin-left: 4vw;
+}
+
+.settings-first-row{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6.2%;
+    margin: 0 4vw 10px;
+    
+}
+
+.current-password-container, 
+.new-password-container, 
+.new-password-again-container,
+.current-email-container, 
+.new-email-container{
+    display: flex;
+    width: 300px;
+    height: 45px;
+    margin-bottom: 10px;
+}
+
+
+
+input[name='current-password'],
+input[name="new-password"],
+input[name="new-password-again"]{
+    font-size: 18px;
+    outline: none;
+    width: 100%;
+    margin-left: -20px;
+}
+
+img[name='change-password-icon']{
+    display: flex;
+    position: relative;
+    height: 22px;
+    width: 20px;
+    margin-top: 10px;
+    left: 13px;
+}
+
+.save-new-password{
+    display: flex;
+    margin-left: auto;
+    margin-right: 4vw;
+    border: none;
+    background-color: #4FC4F3;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px 20px;
+    transition: background-color 0.3s;
+}
+
+.save-new-password:hover,
+.save-new-email:hover{
+    background-color: #228FCB;;
+}
+
+.password-tooltips-container{
+    display: flex;
+    flex-direction: row;
+    gap: 64px;
+    margin: 0 4vw;
+
+}
+
+.wrongNewPasswordText{
+    display: flex;
+    width: 300px;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    height: fit-content;
+    position: relative;
+    margin-right: auto;
+    left: 364px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: justify;
+}
+
+.wrongNewPasswordAgainText{
+    display: flex;
+    position: relative;
+    width: 300px;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    height: fit-content;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: justify;
+    margin-left: auto;
+}
+
+.settings-second-row{
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: left;
+    gap: 6.2%;
+    margin: 0 4vw;
+}
+
+input[name='current-email'],
+input[name="new-email"]{
+    font-size: 18px;
+    outline: none;
+    width: 100%;
+    margin-left: -24px;
+}
+
+img[name='change-email-icon']{
+    display: flex;
+    position: relative;
+    height: 20px;
+    width: 24px;
+    margin-top: 12px;
+    left: 10px;
+}
+
+.wrongNewEmail{
+    display: flex;
+    position: relative;
+    width: 300px;
+    background-color: white;
+    color: black;
+    padding: 10px;
+    height: fit-content;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: justify;
+    margin-left: 4vw;
+    left: 364px;
+}
+
+
+.save-new-email{
+    display: flex;
+    margin-top: 10px;
+    margin-right: auto;
+    margin-left: 4vw;
+    border: none;
+    background-color: #4FC4F3;
+    margin-bottom: 64px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px 20px;
+    transition: background-color 0.3s;
+}
+  

@@ -15,9 +15,6 @@ const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const REGISTER_URL = '/user-api/register';
 
-let wrongUsername = false;
-let wrongPassword = false;
-let twoPasswordnotequals = false;
 
 export default function Register() {
 
@@ -28,6 +25,9 @@ export default function Register() {
     const [birthdate, setBirthdate] = useState('');
     const [rulesAccepted, setRulesAccepted] = useState(false);
     const [activeTooltip, setActiveTooltip] = useState(null);
+    const [wrongUsername, setWrongUsername] = useState(false);
+    const [wrongPassword, setWrongPassword] = useState(false);
+    const [twoPasswordnotequals, setTwoPasswordnotequals] = useState(false);
     const navigate = useNavigate();
 
 
@@ -36,10 +36,10 @@ export default function Register() {
     
         if (e.target.value.length > 0 && (e.target.value.length < 4 || (!USER_REGEX.test(e.target.value)))) {
             setActiveTooltip('username');
-            wrongUsername = true;
+            setWrongUsername(true);
         } else {
             setActiveTooltip(null);
-            wrongUsername = false;
+            setWrongUsername(false);
         }
     };
     
@@ -48,10 +48,10 @@ export default function Register() {
     
         if (e.target.value.length > 0 && (e.target.value.length < 8 || (!PWD_REGEX.test(e.target.value)))) {
             setActiveTooltip('password');
-            wrongPassword = true;
+            setWrongPassword(true);
         } else {
             setActiveTooltip(null);
-            wrongPassword = false;
+            setWrongPassword(false);
         }
     };
 
@@ -60,11 +60,11 @@ export default function Register() {
     
         if (e.target.value.length > 0 && (e.target.value !== password)) {
             setActiveTooltip('confirmPassword');
-            twoPasswordnotequals = true;
+            setTwoPasswordnotequals(true);
             
         } else {
             setActiveTooltip(null);
-            twoPasswordnotequals = false;
+            setTwoPasswordnotequals(false);
         }
     };
 

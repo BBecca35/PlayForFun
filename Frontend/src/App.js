@@ -10,6 +10,7 @@ import MyGameDescriptions from './components/my-game-descriptions/MyGameDescript
 import AddNewDescripion from './components/add-new-description/AddNewDescription';
 import EditDescription from './components/edit-description/EditDescription';
 import Description from './components/description/Description';
+import Settings from './components/settings/Settings';
 
 function App() {
   
@@ -73,6 +74,7 @@ function App() {
             path="/home" 
             element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}
           />
+          <Route path='/settings' element={isLoggedIn ? <Settings onLogout={handleLogout}/> : <Navigate to="/login" replace />} />
         </Routes>
       </div>
     </Router>

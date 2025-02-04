@@ -33,6 +33,10 @@ export default function Navbar({ onLogout }) {
         navigate('/home')
     }
 
+    const goSettings = () => {
+        navigate('/settings')
+    }
+
     const navigateToMyGameDescriptions = () => {
         navigate('/my-game-descriptions');
     };
@@ -59,7 +63,7 @@ export default function Navbar({ onLogout }) {
             {shouldShowHamburgerMenu && (
                 <div className={`dropdown-menu ${menuOpen ? 'show' : ''}`}>
                     <ul>
-                        <li>Beállítások</li>
+                        <li onClick={goSettings}>Beállítások</li>
                         <li onClick={navigateToMyGameDescriptions}>Játékleírásaim</li>
                         <li onClick={handleLogout}>Kijelentkezés</li>
                     </ul>
