@@ -12,6 +12,7 @@ public interface CommentServiceInterface {
     CommentDto saveComment(CommentDto dto, Long userId, Long gameDescriptionId);
     CommentDto updateComment(Long commentId, CommentDto dto, Long gameDescriptionId, Long userId);
     void deleteComment(Long gameDescriptionId, Long userId, Long commentId);
+    void deleteAllCommentUnderADesc(Long gameDescriptionId);
     
     
 }

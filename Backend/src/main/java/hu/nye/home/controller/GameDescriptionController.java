@@ -1,6 +1,7 @@
 package hu.nye.home.controller;
 
 import hu.nye.home.dto.GameDescriptionDto;
+import hu.nye.home.dto.GameDescriptionFilterRequest;
 import hu.nye.home.service.Interfaces.GameDescriptionServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RequestMapping("/gd-api")
@@ -38,36 +38,6 @@ public class GameDescriptionController {
         return gameDescriptionService.getGameDescriptionsByUserId(userId);
     }
     
-    @GetMapping("/genre/{genre}/gameDescriptions")
-    public List<GameDescriptionDto> getGameDescriptionsByGenre(@PathVariable(value = "genre") String genre) {
-        return gameDescriptionService.getAllByGenre(genre);
-    }
-    
-    @GetMapping("/platform/{platform}/gameDescriptions")
-    public List<GameDescriptionDto> getGameDescriptionsByPlatform(@PathVariable(value = "platform")
-                                                                      String platform) {
-        return gameDescriptionService.getAllByPlatform(platform);
-    }
-    
-    @GetMapping("/agelimit/{agelimit}/gameDescriptions")
-    public List<GameDescriptionDto> getGameDescriptionsByAgeLimit(@PathVariable(value = "agelimit")
-                                                                      int ageLimit) {
-        return gameDescriptionService.getAllByAgeLimit(ageLimit);
-    }
-    
-    @GetMapping("/publisher/{publisher}/gameDescriptions")
-    public List<GameDescriptionDto> getGameDescriptionsByPublisher(@PathVariable(value = "publisher")
-                                                                       String publisher) {
-        return gameDescriptionService.getAllByPublisher(publisher);
-    }
-    
-    //https://www.youtube.com/watch?v=UHEDH3lnLb8&t=471s
-    @GetMapping("/gameDescriptions/publishedAt")
-    public List<GameDescriptionDto> getGameDescriptionsByPublishedAtBetween(@RequestParam int min,
-                                                                            @RequestParam int max) {
-        return gameDescriptionService.getAllByPublishedAtBetween(min, max);
-    }
-    
     //Lekér egy adott leírást id alapján, ami majd a játék leírás betöltésnél lesz hasznos
     @GetMapping("/gameDescriptions/{id}")
     public ResponseEntity<GameDescriptionDto> getGameDescriptionById(
@@ -82,10 +52,16 @@ public class GameDescriptionController {
     }
     
     @GetMapping("/name/{name}/gameDescription")
-    public ResponseEntity<GameDescriptionDto> getGameDescriptionByName(@PathVariable(value = "name")
-                                                                           String name){
-        GameDescriptionDto dto = gameDescriptionService.getByName(name);
+    public ResponseEntity<List<GameDescriptionDto>> getGameDescriptionByName(
+      @PathVariable(value = "name") String name){
+        List<GameDescriptionDto> dto = gameDescriptionService.searchByName(name);
         return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+    
+    @PostMapping("/gameDescriptions/filter")
+    public List<GameDescriptionDto> getGameDescriptionsByFilters(
+      @RequestBody GameDescriptionFilterRequest filters) {
+        return gameDescriptionService.getAllByFilters(filters);
     }
     
     @PutMapping("/user/{userId}/gameDescriptions/{id}")
@@ -106,4 +82,27 @@ public class GameDescriptionController {
         return new ResponseEntity<>("Game description deleted successfully", HttpStatus.OK);
     }
     
+    @GetMapping("/gameDescriptions/sorted/ByNameAsc")
+    public ResponseEntity<List<GameDescriptionDto>> getGameDescriptionsSortedByNameAsc() {
+        List<GameDescriptionDto> gameDescriptions = gameDescriptionService.getAllGameDescriptionsSortedByNameAsc();
+        return ResponseEntity.ok(gameDescriptions);
+    }
+    
+    @GetMapping("/gameDescriptions/sorted/ByNameDesc")
+    public ResponseEntity<List<GameDescriptionDto>> getGameDescriptionsSortedByNameDesc() {
+        List<GameDescriptionDto> gameDescriptions = gameDescriptionService.getAllGameDescriptionsSortedByNameDesc();
+        return ResponseEntity.ok(gameDescriptions);
+    }
+    
+    @GetMapping("/gameDescriptions/sorted/ByUserNameAsc")
+    public ResponseEntity<List<GameDescriptionDto>> getGameDescriptionsSortedByUserNameAsc() {
+        List<GameDescriptionDto> gameDescriptions = gameDescriptionService.getAllGameDescriptionsSortedByUserNameAsc();
+        return ResponseEntity.ok(gameDescriptions);
+    }
+    
+    @GetMapping("/gameDescriptions/sorted/ByUserNameDesc")
+    public ResponseEntity<List<GameDescriptionDto>> getGameDescriptionsSortedByUserNameDesc() {
+        List<GameDescriptionDto> gameDescriptions = gameDescriptionService.getAllGameDescriptionsSortedByUserNameDesc();
+        return ResponseEntity.ok(gameDescriptions);
+    }
 }

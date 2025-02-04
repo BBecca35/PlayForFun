@@ -1,10 +1,9 @@
 package hu.nye.home.service.Interfaces;
 
 import hu.nye.home.dto.GameDescriptionDto;
-import hu.nye.home.entity.GameDescriptionModel;
+import hu.nye.home.dto.GameDescriptionFilterRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 //szűrő lekérdezések: kiadás éve(between), korhatár, név, kiadó,
@@ -24,14 +23,15 @@ public interface GameDescriptionServiceInterface {
                                            MultipartFile imageFile);
     GameDescriptionDto updateGameDescription(Long gameDescriptionId, Long userId,
                                              GameDescriptionDto dto, MultipartFile imageFile);
+    GameDescriptionDto updateAvgRating(Long gameDescriptionId, int avgRating);
     void deleteGameDescription(Long gameDescriptionId);
     
-    List<GameDescriptionDto> getAllByGenre(String genre);
-    List<GameDescriptionDto> getAllByPlatform(String platform);
-    List<GameDescriptionDto> getAllByAgeLimit(int ageLimit);
-    List<GameDescriptionDto> getAllByPublisher(String publisher);
-    List<GameDescriptionDto> getAllByPublishedAtBetween(int min, int max);
-    GameDescriptionDto getByName(String name);
-    
+    List<GameDescriptionDto> getAllByFilters(GameDescriptionFilterRequest filters);
+    List<GameDescriptionDto> getAllGameDescriptionsSortedByNameAsc();
+    List<GameDescriptionDto> getAllGameDescriptionsSortedByNameDesc();
+    List<GameDescriptionDto> getAllGameDescriptionsSortedByUserNameAsc();
+    List<GameDescriptionDto> getAllGameDescriptionsSortedByUserNameDesc();
+    List<GameDescriptionDto> searchByName(String name);
+    void updateGameDescriptionRating(Long gameDescriptionId);
     
 }

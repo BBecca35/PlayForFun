@@ -4,7 +4,6 @@ import hu.nye.home.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -65,6 +64,33 @@ public class ExceptionHandlerController {
         error.put("error", "Comment not found!");
         error.put("message", "Comment not found in our database!");
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(EmailNotMatchingException.class)
+    public ResponseEntity<Map<String, String>> emailNotFoundException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "401");
+        error.put("error", "Current email not matching!");
+        error.put("message", "The provided current email address does not match the user's email address!");
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+    
+    @ExceptionHandler(PasswordNotMatchingException.class)
+    public ResponseEntity<Map<String, String>> passwordNotFoundException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "401");
+        error.put("error", "Current Password not matching!");
+        error.put("message", "The provided current password does not match the user's password!");
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+    
+    @ExceptionHandler(SameAsCurrentPasswordException.class)
+    public ResponseEntity<Map<String, String>> sameAsCurrentPasswordException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "409");
+        error.put("error", "Same as current password!");
+        error.put("message", "The new password cannot be the same as the current password!");
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
     
 }

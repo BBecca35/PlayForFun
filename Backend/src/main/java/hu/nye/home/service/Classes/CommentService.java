@@ -23,14 +23,16 @@ public class CommentService implements CommentServiceInterface {
     
     private final CommentRepository commentRepository;
     private final GameDescriptionRepository gameDescriptionRepository;
+    private final GameDescriptionService gameDescriptionService;
     private final UserRepository userRepository;
     
     @Autowired
     public CommentService(CommentRepository commentRepository,
-                          GameDescriptionRepository gameDescriptionRepository,
+                          GameDescriptionRepository gameDescriptionRepository, GameDescriptionService gameDescriptionService,
                           UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.gameDescriptionRepository = gameDescriptionRepository;
+        this.gameDescriptionService = gameDescriptionService;
         this.userRepository = userRepository;
     }
     
@@ -73,6 +75,7 @@ public class CommentService implements CommentServiceInterface {
         comment.setUser(user);
         comment.setGameDescription(gameDescription);
         CommentModel newComment = commentRepository.save(comment);
+        gameDescriptionService.updateGameDescriptionRating(gameDescriptionId);
         return mapToDto(newComment);
     }
     
@@ -113,11 +116,29 @@ public class CommentService implements CommentServiceInterface {
         commentRepository.delete(comment);
     }
     
+    @Override
+    @SneakyThrows
+    public void deleteAllCommentUnderADesc(Long gameDescriptionId) {
+        GameDescriptionModel gameDescription = gameDescriptionRepository.findById(gameDescriptionId)
+                                                 .orElseThrow(GameDescriptionNotFoundException::new);
+        
+        List<CommentModel> comments = commentRepository.findAllByGameDescription_Id(gameDescriptionId);
+        
+        if (comments.isEmpty()) {
+            throw new CommentNotFoundException();
+        }
+        
+        commentRepository.deleteAll(comments);
+    }
+    
     private CommentDto mapToDto(CommentModel comment) {
         CommentDto dto = new CommentDto();
         dto.setId(comment.getId());
+        dto.setUserId(comment.getUser().getId());
+        dto.setGameDescriptionId(comment.getGameDescription().getId());
         dto.setMessage(comment.getMessage());
         dto.setRating(comment.getRating());
+        dto.setCreatedAt(comment.getCreatedAt());
         return dto;
     }
     

@@ -73,4 +73,11 @@ public class CommentController {
         commentService.deleteComment(gameDescriptionId, userId, id);
         return new ResponseEntity<>("Review deleted successfully", HttpStatus.OK);
     }
+    
+    @DeleteMapping("/gameDescription/{gameDescriptionId}/comments")
+    public ResponseEntity<String> deleteAllComment(@PathVariable(value = "gameDescriptionId")
+                                                    Long gameDescriptionId ) {
+        commentService.deleteAllCommentUnderADesc(gameDescriptionId);
+        return new ResponseEntity<>("All Review deleted successfully", HttpStatus.OK);
+    }
 }

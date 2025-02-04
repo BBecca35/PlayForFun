@@ -1,17 +1,18 @@
 package hu.nye.home.service.Classes;
 
+import hu.nye.home.dto.ChangeEmailDto;
+import hu.nye.home.dto.ChangePasswordDto;
 import hu.nye.home.dto.UserDto;
 import hu.nye.home.entity.RoleModel;
 import hu.nye.home.entity.UserModel;
-import hu.nye.home.exception.EmailIsExistException;
-import hu.nye.home.exception.UserNotFoundException;
-import hu.nye.home.exception.UsernameIsExistException;
+import hu.nye.home.exception.*;
 import hu.nye.home.repository.RoleRepository;
 import hu.nye.home.repository.UserRepository;
 import hu.nye.home.security.CustomUserDetailsService;
 import hu.nye.home.service.Interfaces.UserServiceInterface;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,9 +96,45 @@ public class UserService implements UserServiceInterface {
         UserModel user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setBirthDate(dto.getBirthDate());
         return userRepository.save(user);
+    }
+    
+    @Override
+    @SneakyThrows
+    public UserModel updateEmail(ChangeEmailDto dto) {
+        UserModel user = userRepository.findById(dto.getId())
+                           .orElseThrow(UserNotFoundException::new);
+        if(!(user.getEmail().equals(dto.getCurrentEmail()))) {
+            throw new EmailNotMatchingException();
+        }else if(userRepository.findByEmail(dto.getNewEmail()) != null){
+            throw new EmailIsExistException();
+            
+        }else {
+            user.setEmail(dto.getNewEmail());
+            return userRepository.save(user);
+        }
+    }
+    
+    @Override
+    @SneakyThrows
+    public UserModel updatePassword(ChangePasswordDto dto) {
+        UserModel user = userRepository.findById(dto.getId())
+                           .orElseThrow(UserNotFoundException::new);
+        
+        if(!(passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword()))){
+            throw new PasswordNotMatchingException();
+        }
+        
+        else if(passwordEncoder.matches(dto.getNewPassword(), user.getPassword())){
+            throw new SameAsCurrentPasswordException();
+        }
+        else {
+            user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+            return userRepository.save(user);
+        }
+        
     }
     
     @Override

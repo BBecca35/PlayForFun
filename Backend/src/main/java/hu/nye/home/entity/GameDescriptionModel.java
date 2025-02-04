@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Getter
@@ -53,6 +54,17 @@ public class GameDescriptionModel {
     
     @Column(nullable = false, length = 3000)
     private String description;
+    
+    @Column(name = "avg_rating", nullable = true)
+    private int avgRating;
+    
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
     
     private String imagePath;
     private String imageName;
