@@ -5,6 +5,7 @@ import hu.nye.home.service.Interfaces.CommentServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,6 +54,7 @@ public class CommentController {
     }
     
     @PutMapping("/user/{userId}/gameDescription/{gameDescriptionId}/comments/{id}")
+    @PreAuthorize("hasAnyAuthority('admin:update', 'moderator:update')")
     public ResponseEntity<CommentDto> updateComment(@PathVariable(value = "userId") Long userId,
                                                   @PathVariable(value = "gameDescriptionId")
                                                   Long gameDescriptionId,
@@ -64,6 +66,7 @@ public class CommentController {
     }
     
     @DeleteMapping("/user/{userId}/gameDescription/{gameDescriptionId}/comments/{id}")
+    @PreAuthorize("hasAnyAuthority('admin:delete', 'moderator:delete')")
     public ResponseEntity<String> deleteComment(@PathVariable(value = "userId")
                                                    Long userId,
                                                @PathVariable(value = "gameDescriptionId")
@@ -75,6 +78,7 @@ public class CommentController {
     }
     
     @DeleteMapping("/gameDescription/{gameDescriptionId}/comments")
+    @PreAuthorize("hasAnyAuthority('admin:delete', 'moderator:delete')")
     public ResponseEntity<String> deleteAllComment(@PathVariable(value = "gameDescriptionId")
                                                     Long gameDescriptionId ) {
         commentService.deleteAllCommentUnderADesc(gameDescriptionId);

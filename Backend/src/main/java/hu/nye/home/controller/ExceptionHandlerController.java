@@ -40,7 +40,7 @@ public class ExceptionHandlerController {
     }
     
     @ExceptionHandler(GameDescriptionNotFoundException.class)
-    public ResponseEntity<Map<String, String>> GameDescriptionFoundException(){
+    public ResponseEntity<Map<String, String>> gameDescriptionFoundException(){
         Map<String, String> error = new HashMap<>();
         error.put("status", "404");
         error.put("error", "Game Description not found!");
@@ -91,6 +91,90 @@ public class ExceptionHandlerController {
         error.put("error", "Same as current password!");
         error.put("message", "The new password cannot be the same as the current password!");
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+    
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public ResponseEntity<Map<String, String>> unauthorizedActionException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "403");
+        error.put("error", "Access Denied!");
+        error.put("message", "You can't act on behalf of another user!");
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+    
+    @ExceptionHandler(TokenIsExpiredException.class)
+    public ResponseEntity<Map<String, String>> tokenIsExpiredException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "401");
+        error.put("error", "Token is expired!");
+        error.put("message", "Token is expired!");
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    }
+    
+    @ExceptionHandler(ActiveBanNotFoundException.class)
+    public ResponseEntity<Map<String, String>> activeBanNotFoundException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "404");
+        error.put("error", "Active ban not found!");
+        error.put("message", "Theres no active ban!");
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(BanNotFoundException.class)
+    public ResponseEntity<Map<String, String>> banNotFoundException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "404");
+        error.put("error", "Ban not found!");
+        error.put("message", "Ban not found in our database!");
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+    
+    @ExceptionHandler(BannedUserException.class)
+    public ResponseEntity<Map<String, String>> bannedUserException(BannedUserException ex){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "403");
+        error.put("error", "The user is banned.");
+        error.put("message", "Your account is banned.");
+        error.put("banExpiration", String.valueOf(ex.getBan().getBanExpiration()));
+        error.put("bannedAt", String.valueOf(ex.getBan().getBannedAt()));
+        error.put("reason", ex.getBan().getReason());
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+    
+    @ExceptionHandler(AlreadyModeratorException.class)
+    public ResponseEntity<Map<String, String>> alreadyModeratorException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "409");
+        error.put("error", "Already Moderator!");
+        error.put("message", "This user is already a moderator!");
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+    
+    @ExceptionHandler(AlreadyUserException.class)
+    public ResponseEntity<Map<String, String>> alreadyUserException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "409");
+        error.put("error", "Already User!");
+        error.put("message", "This user is already a user!");
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+    
+    @ExceptionHandler(CannotPromoteAdminException.class)
+    public ResponseEntity<Map<String, String>> cannotPromoteAdminException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "403");
+        error.put("error", "Cannot Promote Admin!");
+        error.put("message", "Users with the admin role cannot be reassigned as moderators!");
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+    
+    @ExceptionHandler(CannotDemoteAdminException.class)
+    public ResponseEntity<Map<String, String>> cannotDemoteAdminException(){
+        Map<String, String> error = new HashMap<>();
+        error.put("status", "403");
+        error.put("error", "Cannot Demote Admin!");
+        error.put("message", "Users with the admin role cannot be reassigned as users!");
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
     
 }

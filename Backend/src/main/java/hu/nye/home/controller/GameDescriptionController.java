@@ -26,19 +26,17 @@ public class GameDescriptionController {
     public ResponseEntity<GameDescriptionDto> createGameDescription(
       @PathVariable(value = "userId") Long userId,
       @RequestPart(value = "dto") GameDescriptionDto dto,
-      @RequestPart(value = "image", required = false) MultipartFile image) {
+      @RequestPart(value = "image", required = false) MultipartFile image,
+      @RequestHeader(value = "Authorization") String authorizationHeader) {
         return new ResponseEntity<>(gameDescriptionService.saveGameDescription(userId, dto, image),
           HttpStatus.CREATED);
     }
     
-    //Lekéri az összes leírást, ami az adott felhasználóhoz tartozik
-    // (nem a szűréshez tartozik,hanem a játékleírásaim oldalhoz)
     @GetMapping("/user/{userId}/gameDescriptions")
     public List<GameDescriptionDto> getGameDescriptionsByUserId(@PathVariable(value = "userId") Long userId) {
         return gameDescriptionService.getGameDescriptionsByUserId(userId);
     }
     
-    //Lekér egy adott leírást id alapján, ami majd a játék leírás betöltésnél lesz hasznos
     @GetMapping("/gameDescriptions/{id}")
     public ResponseEntity<GameDescriptionDto> getGameDescriptionById(
       @PathVariable(value = "id") Long gameDescriptionId) {

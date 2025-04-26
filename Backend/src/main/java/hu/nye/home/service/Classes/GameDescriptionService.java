@@ -6,6 +6,7 @@ import hu.nye.home.entity.GameDescriptionModel;
 import hu.nye.home.entity.UserModel;
 import hu.nye.home.exception.GameDescriptionIsExistException;
 import hu.nye.home.exception.GameDescriptionNotFoundException;
+import hu.nye.home.exception.UnauthorizedActionException;
 import hu.nye.home.exception.UserNotFoundException;
 import hu.nye.home.repository.CommentRepository;
 import hu.nye.home.repository.GameDescriptionRepository;
@@ -15,14 +16,14 @@ import hu.nye.home.specifications.GameDescriptionSpecifications;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-//https://github.com/teddysmithdev/pokemon-review-springboot/blob/master/src/main/java/com
-//pokemonreview/api/service/impl/ReviewServiceImpl.java
 
 @Service
 public class GameDescriptionService implements GameDescriptionServiceInterface {
@@ -41,7 +42,6 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
         this.commentRepository = commentRepository;
         this.imageService = imageService;
     }
-    
     
     @Override
     public List<GameDescriptionDto> getGameDescriptionsByUserId(Long id) {
@@ -67,8 +67,15 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
     @Override
     @SneakyThrows
     public GameDescriptionDto saveGameDescription(Long userId, GameDescriptionDto dto, MultipartFile imageFile) {
-        GameDescriptionModel gameDescription = mapToEntity(dto);
+        UserModel loggedInUser = getAuthenticatedUser();
+        
+        
+        if (!isModerator() && !isAdmin() && !loggedInUser.getId().equals(userId)) {
+            throw new UnauthorizedActionException();
+        }
+        
         UserModel user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        GameDescriptionModel gameDescription = mapToEntity(dto);
         gameDescription.setUser(user);
         
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -89,6 +96,12 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
     @SneakyThrows
     public GameDescriptionDto updateGameDescription(Long gameDescriptionId, Long userId,
                                                     GameDescriptionDto dto, MultipartFile imageFile) {
+        UserModel loggedInUser = getAuthenticatedUser();
+        
+        if(!isModerator() && !isAdmin() && !loggedInUser.getId().equals(userId)){
+            throw new UnauthorizedActionException();
+        }
+        
         UserModel user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         GameDescriptionModel gameDescription = gameDescriptionRepository.findById(gameDescriptionId).
                                                  orElseThrow(GameDescriptionNotFoundException::new);
@@ -135,6 +148,12 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
     public void deleteGameDescription(Long gameDescriptionId) {
         GameDescriptionModel gameDescription = gameDescriptionRepository.findById(gameDescriptionId)
                                                  .orElseThrow(GameDescriptionNotFoundException::new);
+        
+        UserModel loggedInUser = getAuthenticatedUser();
+        
+        if(!isModerator() && !isAdmin() && !loggedInUser.getId().equals(gameDescription.getUser().getId())){
+            throw new UnauthorizedActionException();
+        }
         
         if (gameDescription.getImagePath() != null) {
             imageService.deleteFileFromFileSystem(gameDescription.getImagePath());
@@ -197,11 +216,11 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
     }
     
     @Override
-    public void updateGameDescriptionRating(Long gameDescriptionId) {
+    public void calculateGameDescriptionRating(Long gameDescriptionId) {
         List<Integer> ratings = commentRepository.findRatingsByGameDescriptionId(gameDescriptionId);
         List<Integer> validRatings = ratings.stream()
                                        .filter(rating -> rating != null && rating > 0)
-                                       .collect(Collectors.toList());
+                                       .toList();
         double averageRating = validRatings.isEmpty() ? 0 :
                                  validRatings.stream().mapToInt(Integer::intValue).average().orElse(0);
         int roundedRating = (int) Math.round(averageRating);
@@ -242,6 +261,34 @@ public class GameDescriptionService implements GameDescriptionServiceInterface {
         gameDescription.setImagePath(dto.getImagePath());
         gameDescription.setImageType(dto.getImageType());
         return gameDescription;
+    }
+    
+    @SneakyThrows
+    private UserModel getAuthenticatedUser() {
+        String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(!userRepository.existsByUsername(loggedInUsername)){
+            throw new UserNotFoundException();
+        }
+        else{
+            return userRepository.findByUsername(loggedInUsername);
+        }
+        
+    }
+    
+    @Override
+    public boolean isAdmin() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                 .stream()
+                 .map(GrantedAuthority::getAuthority)
+                 .anyMatch(role -> role.equals("ROLE_ADMIN"));
+    }
+    
+    @Override
+    public boolean isModerator() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                 .stream()
+                 .map(GrantedAuthority::getAuthority)
+                 .anyMatch(role -> role.equals("ROLE_MODERATOR"));
     }
     
 }

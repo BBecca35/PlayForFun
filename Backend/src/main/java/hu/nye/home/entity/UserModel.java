@@ -2,17 +2,14 @@ package hu.nye.home.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import hu.nye.home.authorization.Role;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-
-//Roles: user, admin, moderator
-//moderator: commentek törlése, felhasználók figyelmeztetése
-//admin: felhasználók ideiglenes vagy örökös kitíltása a weboldalról,
-//amit majd a szabályszegés súlyossága fog eldönteni
 
 @Getter
 @Setter
@@ -31,31 +28,34 @@ public class UserModel {
     
     @Column(unique = true)
     private String username;
-    
     private String password;
     
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("birthdate")
     private LocalDate birthDate;
     
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    
     @Column(updatable = false)
     private LocalDateTime createdAt;
     
-    //https://github.com/teddysmithdev/pokemon-review-springboot
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GameDescriptionModel> gameDescriptions = new ArrayList<>();
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommentModel> comments = new ArrayList<>();
     
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<RoleModel> roles = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BanModel> bans = new ArrayList<>();
     
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+    }
+    
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return role.getAuthorities();
     }
     
     public UserModel(String email, String username, String password, LocalDate birthDate) {
@@ -64,19 +64,9 @@ public class UserModel {
         this.password = password;
         this.birthDate = birthDate;
     }
-    
-    public UserModel(String username, String password, List<RoleModel> roles) {
+    public UserModel(String username, String password, Role role) {
         this.username = username;
         this.password = password;
-        this.roles = roles;
-    }
-    
-    @Override
-    public String toString() {
-        return "User{" +
-                 "id=" + id +
-                 ", email='" + email + '\'' +
-                 ", username='" + username + '\'' +
-                 '}';
+        this.role = role;
     }
 }

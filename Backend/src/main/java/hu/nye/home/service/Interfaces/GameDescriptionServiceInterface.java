@@ -6,13 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-//szűrő lekérdezések: kiadás éve(between), korhatár, név, kiadó,
-// műfaj, Platform, leírás készítője
-
-//2024.01.09: A játék leírás készítése során a korhatár, a plartform, a kiadás éve és műfaj
-// egy legördülő menüpontok lesznek, ahol előre megadott választási lehetőségek alapján
-// lehet kiválasztani a számunkra megfelelő opciót. Így a szűrés is pontosabb tud majd lenni.
-
 public interface GameDescriptionServiceInterface {
     
     List<GameDescriptionDto> getGameDescriptionsByUserId(Long id);
@@ -32,6 +25,7 @@ public interface GameDescriptionServiceInterface {
     List<GameDescriptionDto> getAllGameDescriptionsSortedByUserNameAsc();
     List<GameDescriptionDto> getAllGameDescriptionsSortedByUserNameDesc();
     List<GameDescriptionDto> searchByName(String name);
-    void updateGameDescriptionRating(Long gameDescriptionId);
-    
+    void calculateGameDescriptionRating(Long gameDescriptionId);
+    boolean isAdmin();
+    boolean isModerator();
 }

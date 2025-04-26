@@ -15,15 +15,12 @@ public class FileService {
     private static final String IMAGES_FOLDER = "C:/apache-tomcat-9.0.39/webapps/ROOT/images/";
     
     public String saveFileToFileSystem(MultipartFile file) {
-        // Ellenőrizzük az eredeti fájlnevet
         String originalFilename = file.getOriginalFilename();
         String extension = "";
         
-        // Ha az eredeti fájlnév tartalmaz kiterjesztést
         if (originalFilename != null && originalFilename.contains(".")) {
             extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         } else {
-            // Ha nincs kiterjesztés, MIME típus alapján próbáljuk meghatározni
             String mimeType = file.getContentType();
             if (mimeType != null) {
                 switch (mimeType) {
@@ -42,28 +39,19 @@ public class FileService {
             }
         }
         
-        // Az új fájlnév az eredeti fájlnév és a kiterjesztés kombinációja
-        String newFilename = UUID.randomUUID().toString() + extension; // Használj UUID-t, ha egyedi neveket szeretnél
-        String filePath = IMAGES_FOLDER + newFilename;
-        
         File directory = new File(IMAGES_FOLDER);
         if (!directory.exists()) {
             directory.mkdirs();
         }
+        
+        String newFilename = UUID.randomUUID().toString() + extension;
+        String filePath = IMAGES_FOLDER + newFilename;
         
         try {
             file.transferTo(new File(filePath));
             return newFilename;
         } catch (IOException e) {
             throw new RuntimeException("Error while saving the file", e);
-        }
-    }
-    
-    public byte[] readFileFromFileSystem(String filePath) {
-        try {
-            return Files.readAllBytes(Paths.get(filePath));
-        } catch (IOException e) {
-            throw new RuntimeException("Error while reading the file", e);
         }
     }
     

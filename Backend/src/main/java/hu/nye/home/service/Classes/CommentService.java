@@ -6,6 +6,7 @@ import hu.nye.home.entity.GameDescriptionModel;
 import hu.nye.home.entity.UserModel;
 import hu.nye.home.exception.CommentNotFoundException;
 import hu.nye.home.exception.GameDescriptionNotFoundException;
+import hu.nye.home.exception.UnauthorizedActionException;
 import hu.nye.home.exception.UserNotFoundException;
 import hu.nye.home.repository.CommentRepository;
 import hu.nye.home.repository.GameDescriptionRepository;
@@ -13,6 +14,7 @@ import hu.nye.home.repository.UserRepository;
 import hu.nye.home.service.Interfaces.CommentServiceInterface;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,14 +70,28 @@ public class CommentService implements CommentServiceInterface {
     @Override
     @SneakyThrows
     public CommentDto saveComment(CommentDto dto, Long userId, Long gameDescriptionId) {
-        CommentModel comment = mapToEntity(dto);
+        String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel loggedInUser;
+        
+        if(!userRepository.existsByUsername(loggedInUsername)){
+            throw new UserNotFoundException();
+        }
+        else{
+            loggedInUser = userRepository.findByUsername(loggedInUsername);
+        }
+        
+        if (!loggedInUser.getId().equals(userId)) {
+            throw new UnauthorizedActionException();
+        }
+        
         UserModel user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         GameDescriptionModel gameDescription = gameDescriptionRepository.findById(gameDescriptionId).
                                                  orElseThrow(GameDescriptionNotFoundException::new);
+        CommentModel comment = mapToEntity(dto);
         comment.setUser(user);
         comment.setGameDescription(gameDescription);
         CommentModel newComment = commentRepository.save(comment);
-        gameDescriptionService.updateGameDescriptionRating(gameDescriptionId);
+        gameDescriptionService.calculateGameDescriptionRating(gameDescriptionId);
         return mapToDto(newComment);
     }
     

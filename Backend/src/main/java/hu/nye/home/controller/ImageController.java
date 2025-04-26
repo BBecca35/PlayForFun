@@ -25,7 +25,7 @@ public class ImageController {
             Path imagePath = Paths.get(IMAGES_FOLDER, fileName);
             byte[] imageBytes = Files.readAllBytes(imagePath);
             return ResponseEntity.ok()
-                     .contentType(MediaType.IMAGE_JPEG) // vagy IMAGE_PNG, ha PNG fájlokról van szó
+                     .contentType(MediaType.IMAGE_JPEG)
                      .body(imageBytes);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
