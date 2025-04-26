@@ -1,4 +1,3 @@
-/* Általános stílusok */
 .my-game-decriptions-container {
   font-family: Arial, sans-serif;
   background-color: #127BA3;
@@ -10,8 +9,6 @@
   display: flex;
   padding-top: 60px;
 }
-
-/* Home content */
 
 .my-description-text {
     display: flex;

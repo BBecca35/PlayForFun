@@ -1,0 +1,241 @@
+.ban-user-main-container{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background-color: #4fc4f3;
+    width: 70vw;
+    min-height: 100vh;
+    height: auto;
+    padding-top: 60px;
+}
+
+.ban-user-header{
+    display: flex;
+    flex-direction: column;
+    margin-left: 50px;
+    padding-top: 30px;
+    width: calc(100% - 100px);
+}
+
+.ban-user-title{
+    display: flex;
+    color: white;
+    text-align: left;
+    font-size: 45px;
+    width: fit-content;
+}
+
+.ban-user-title-line{
+    position: relative;
+    margin-top: 5px;
+    width: 100%;
+    height: 5px;
+    border: none;
+    background: white; 
+    opacity: 100%;
+}
+
+.ban-user-content{
+    display: flex;
+    margin: 20px 50px 0;
+    padding: auto;
+    width: calc(100% - 100px);
+    height: 195px;
+}
+
+.ban-user-option{
+    display: flex;
+    flex-direction: column;
+    margin: 0 250px 10px 20px;
+    width: 300px;
+    height: fit-content;
+}
+
+.duration-of-ban-option{
+    display: flex;
+    margin-right: 20px;
+    flex-direction: column;
+    height: fit-content;
+    width: 800px
+}
+
+.ban-mode-title, .duration-of-ban-title, .ban-reason-title{
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    font-size: 28px;
+    color: white;
+    margin-bottom: 10px;
+}
+
+.option1, .option2{
+    display: block;
+    position: relative;
+    text-align: left;
+    padding-left: 30px; 
+    margin-bottom: 5px;
+    color: white;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+  
+.option1 input, .option2 input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+  
+.checkmark {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+  
+.option1 input:checked .checkmark, 
+.option2 input:checked .checkmark  {
+    border: 2px solid white;
+}
+  
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.option1 input:checked ~ .checkmark:after, 
+.option2 input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.option1 .checkmark:after{
+    position: absolute;
+    top: 3.5px;
+    left: 3.5px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: white;
+}
+
+.option2 .checkmark:after{
+    position: absolute;
+    left: 3.4px;
+    top: 3.4px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: white;
+}
+
+.duration-of-ban-content{
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+.ban-reason{
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 100px);
+    margin-left: 50px;
+    margin-bottom: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+
+}
+
+.ban-reason-textarea{
+    display: flex;
+    border: 3px solid #0886c1;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 16px;
+    color: #0886c1;
+    height: 150px;
+    outline: none;
+    resize: none;
+}
+
+.skip-reason-container{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 20px;
+}
+
+input[name="skip-reason"] {
+    display: none;
+}
+
+.skip-reason-custom {
+    position: relative;
+    font-size: 20px;
+    color: white;
+    padding-left: 30px;
+    
+}
+
+.skip-reason-custom:before {
+    content: "";
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    top: 2px;
+    width: 25px; 
+    height: 25px; 
+    border: 2px solid #333;
+    color: #fff;
+    background-color: #fff;
+    border-radius: 5px; 
+    transition: all 0.3s ease; 
+}
+
+input[name="skip-reason"]:checked + .skip-reason-custom:before {
+    content: "✔";
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: white;
+    background-color: #4FC4F3;
+}
+
+input[name="skip-reason"]:not(:checked) + .skip-reason-custom:before {
+    background-color: #fff; 
+    border-color: #4FC4F3; 
+}
+
+.ban-submition{
+    background-color:#62e1fe;
+    border: 2px solid #0886c1;
+    width: 120px;
+    align-items: center;
+    padding: 5px 10px;
+    margin-left: auto;
+    color: #0886c1;
+    font-size: 18px;
+}
+
+.ban-submition:disabled {
+    background-color: #ccc; 
+    color: #666; 
+    border: 2px solid #999; 
+    cursor: not-allowed; 
+    opacity: 0.6; 
+}
+
+  
+
+
+
+

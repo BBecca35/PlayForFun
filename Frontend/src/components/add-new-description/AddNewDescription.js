@@ -3,7 +3,8 @@ import './AddNewDescription.css';
 import placeholder from '../Assets/placeholder.png';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
+import axiosInstance from '../../api/axiosInstance';
 
 export default function AddNewDescription() {
    
@@ -15,6 +16,7 @@ export default function AddNewDescription() {
     const [platform, setPlatform] = useState('');
     const [ageLimit, setAgeLimit] = useState('');
     const [image, setImage] = useState(placeholder);
+    const { auth } = useAuth();
     const navigate = useNavigate();
 
     const generateYearOptions = () => {
@@ -42,11 +44,9 @@ export default function AddNewDescription() {
     const handleSaving = async (e) => {
         e.preventDefault();
 
-        const userId = localStorage.getItem('userId');
         const publicationYearInt = parseInt(publicationYear, 10);
         const ageLimitInt = parseInt(ageLimit, 10);
-        const userIdLong = userId ? Number(userId) : null;
-        const CREATE_NEW_DESCRIPTION_URL = `/gd-api/user/${userIdLong}/gameDescriptions`
+        const CREATE_NEW_DESCRIPTION_URL = `/gd-api/user/${auth.userId}/gameDescriptions`
 
         if (e.target.type === "file") {
             return;
@@ -74,18 +74,20 @@ export default function AddNewDescription() {
         })], {type: "application/json"}));
 
         if (image && image !== placeholder) {
-            // Csak akkor adjuk hozzá a fájlt, ha van tényleges fájl
             const fileInput = document.getElementById("myfile");
             if (fileInput.files.length > 0) {
-                const file = fileInput.files[0]; // A feltöltött fájl
-                formData.append("image", file); // Fájl csatolása
+                const file = fileInput.files[0]; 
+                formData.append("image", file); 
             }
         }
 
         try {
             const response = await axiosInstance.post(
                 CREATE_NEW_DESCRIPTION_URL, 
-                formData
+                formData, {
+                    headers: { "Authorization": `Bearer ${auth.accessToken}`, 
+                    'Accept': 'application/json' 
+                }}
             );
             navigate("/my-game-descriptions");         
     

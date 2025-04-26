@@ -1,19 +1,16 @@
 import React from 'react'
 import "./Settings.css"
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react'
+import useLogout from '../../hooks/useLogout';
+import useAuth from '../../hooks/useAuth';
 import password_icon from "../Assets/password.png";
 import email_icon from "../Assets/email.png";
-import axiosInstance from '../../api/axios';
+import axiosInstance from '../../api/axiosInstance';
 
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
-export default function Settings({ onLogout }) {
+export default function Settings() {
     
-    /*
-        <img name="password-icon" src={password_icon} alt=''></img>
-    */
-
     const[currentPassword, setCurrentPassword] = useState('');
     const[newPassword, setNewPassword] = useState('');
     const[newPasswordAgain, setNewPasswordAgain] = useState('');
@@ -21,17 +18,8 @@ export default function Settings({ onLogout }) {
     const[newEmail, setNewEmail] = useState('');
     const[activeTooltip, setActiveTooltip] = useState(null);
     const[wrongNewPassword, setWrongNewPassword] = useState(false);
-    const navigate = useNavigate();
-
-
-    const userId = localStorage.getItem('userId');
-    const userIdLong = userId ? Number(userId) : null;
-
-    const handleLogout = () => {
-        onLogout();
-        navigate('/login');
-
-    };
+    const{ auth } = useAuth();
+    const logoutUser = useLogout();
 
     const handleNewPassword = (e) => {
         setNewPassword(e.target.value);
@@ -90,18 +78,21 @@ export default function Settings({ onLogout }) {
             const CHANGE_PASSWORD_URL = "/user-api/user/changePassword"
             const response = await axiosInstance.put(CHANGE_PASSWORD_URL, 
                 JSON.stringify({
-                    id: userIdLong, 
+                    id: auth.userId, 
                     currentPassword: currentPassword, 
                     newPassword: newPassword}),
                 {
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json',
+                        "Authorization": `Bearer ${auth.accessToken}`
+                        
+                    },
                     withCredentials: true
                 }
             );
             setCurrentPassword('');
             setNewPassword('');
             setNewPasswordAgain('');
-            handleLogout();
+            logoutUser();
             alert("A jelszó módosult!");
 
 
@@ -143,17 +134,19 @@ export default function Settings({ onLogout }) {
             const CHANGE_EMAIL_URL = "/user-api/user/changeEmail"
             const response = await axiosInstance.put(CHANGE_EMAIL_URL, 
                 JSON.stringify({
-                    id: userIdLong, 
+                    id: auth.userId, 
                     currentEmail: currentEmail, 
                     newEmail: newEmail}),
                 {
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 
+                        "Authorization": `Bearer ${auth.accessToken}`},
+                    
                     withCredentials: true
                 }
             );
             setCurrentEmail('');
             setNewEmail('');
-            handleLogout();
+            logoutUser();
             alert("Az email-cím módosult!");
 
 

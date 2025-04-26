@@ -1,83 +1,61 @@
-import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from "react-router-dom";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/login/Login';
-import Navbar from './components/navbar/navbar';
-import Register from './components/register/Register';
-import Home from './components/home/Home';
-import MyGameDescriptions from './components/my-game-descriptions/MyGameDescriptions';
-import AddNewDescripion from './components/add-new-description/AddNewDescription';
-import EditDescription from './components/edit-description/EditDescription';
-import Description from './components/description/Description';
-import Settings from './components/settings/Settings';
+import Layout from "./components/Layout";
+import Login from "./components/login/Login";
+import Register from "./components/register/Register";
+import Home from "./components/home/Home";
+import MyGameDescriptions from "./components/my-game-descriptions/MyGameDescriptions";
+import AddNewDescription from "./components/add-new-description/AddNewDescription";
+import EditDescription from "./components/edit-description/EditDescription";
+import Description from "./components/description/Description";
+import Settings from "./components/settings/Settings";
+import PersistLogin from "./components/persistLogin";
+import RequireAuth from "./components/requireAuth";
+import UserManagement from "./components/user-management/userManagement";
+import BanUser from "./components/ban-user/banUser";
+import Unauthorized from "./components/unauthorized/unauthorized";
+import NotFoundPage from "./components/not-found-page/notFoundPage";
+import ManageUser from "./components/manage-user/manageUser";
+import EditBan from "./components/edit-ban/editBan";
 
-function App() {
-  
-   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('isLoggedIn') === 'true';
-  });
 
-  //console.log('Stored Logging:', localStorage.getItem('logging'));
-  //console.log(`Emlékezz rám értéke az appban: ${rememberMe}`);
-
-  useEffect(() => {
-    const storedRememberMe = localStorage.getItem('rememberMe') === 'true';
-    const accessToken = storedRememberMe
-        ? localStorage.getItem('accessToken')
-        : sessionStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    //console.log('Stored RememberMe:', storedRememberMe);
-    //console.log('AccessToken:', accessToken);
-    //console.log('RefreshToken:', refreshToken);
-
-    if (accessToken || (storedRememberMe && refreshToken)) {
-        setIsLoggedIn(true);
-        localStorage.setItem('isLoggedIn', 'true');
-    } else {
-        setIsLoggedIn(false);
-        localStorage.setItem('isLoggedIn', 'false'); 
-    }
-}, []);
-
-  
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    localStorage.setItem('isLoggedIn', 'true');  
-  };
-
-  
-
-  const handleLogout = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    setIsLoggedIn(false);
-    localStorage.setItem('isLoggedIn', 'false');
+const ROLES = {
+  User: "USER",
+  Moderator:"MODERATOR",
+  Admin: "ADMIN",
 };
 
+function App() {
   return (
-    <Router>
-      <div className="App">
-        <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-        <Routes>
-    
-          <Route path="/" element={isLoggedIn ? <Navigate to="/home" replace/> : <Navigate to="/login" replace />} /> 
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="unauthorized" element={<Unauthorized />} />
+      
+        <Route element={<PersistLogin />}>
+          <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin, ROLES.Moderator]} />}>
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="home" element={<Home />} />
+            <Route path="add-new-description" element={<AddNewDescription />} />
+            <Route path="my-game-descriptions" element={<MyGameDescriptions />} />
+            <Route path="edit-description" element={<EditDescription />} />
+            <Route path="description" element={<Description />} />
+            <Route path="settings" element={<Settings />} />          
+          </Route>
 
-          <Route path="/login" element={<Login onLogin={handleLogin}/>} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/add-new-description" element={isLoggedIn ? <AddNewDescripion /> : <Navigate to="/login" replace />} />
-          <Route path="/my-game-descriptions" element={isLoggedIn ? <MyGameDescriptions /> : <Navigate to="/login" replace />} />
-          <Route path="/edit-description/:id" element={isLoggedIn ? <EditDescription /> : <Navigate to="/login" replace />} />
-          <Route path="/description/:id" element={isLoggedIn ? <Description /> : <Navigate to="/login" replace />} />
-          <Route 
-            path="/home" 
-            element={isLoggedIn ? <Home /> : <Navigate to="/login" replace />}
-          />
-          <Route path='/settings' element={isLoggedIn ? <Settings onLogout={handleLogout}/> : <Navigate to="/login" replace />} />
-        </Routes>
-      </div>
-    </Router>
+          <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Moderator]} />}>
+            <Route path="user-management" element={<UserManagement />} />
+            <Route path="manage-user" element={<ManageUser />}/>
+            <Route path="ban-user" element={<BanUser />} />
+            <Route path="edit-ban" element={<EditBan />}/>
+          </Route>
+        </Route>
+
+        <Route path="*" element={<NotFoundPage />}/>
+      </Route>
+    </Routes>
   );
 }
 

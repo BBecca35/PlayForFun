@@ -1,25 +1,32 @@
-import React, { useState, useEffect, useMemo  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import { useMemo } from 'react';
+import placeholder from '../Assets/placeholder.png';
+import axiosInstance from '../../api/axiosInstance';
+import useAuth from '../../hooks/useAuth';
 import './MyGameDescriptions.css';
 
 export default function MyGameDescriptions() {
     const [cells, setCells] = useState([]);
-    const userId = localStorage.getItem('userId');
-    const userIdLong = userId ? Number(userId) : null;
-    const navigate = useNavigate();
+    const navigate = useNavigate(); 
+    const { auth } = useAuth();
     const FETCH_GAME_DESCRIPTIONS_URL = useMemo(() => {
-        return `/gd-api/user/${userIdLong}/gameDescriptions`;
-    }, [userIdLong]); 
-
+        return `/gd-api/user/${auth.userId}/gameDescriptions`;
+    }, [auth.userId]);
+   
     useEffect(() => {
         const fetchGameDescriptions = async () => {
             try {
-                const response = await axiosInstance.get(FETCH_GAME_DESCRIPTIONS_URL);
+                const response = await axiosInstance.get(FETCH_GAME_DESCRIPTIONS_URL,
+                    {
+                        headers: { "Authorization": `Bearer ${auth.accessToken}`, 
+                        'Accept': 'application/json' 
+                    }}
+                );
                 const data = response.data.map((item) => ({
                     id: item.id,
                     title: item.name,
-                    imageUrl: `http://localhost:8080/api/images/${item.imageName}`, // A kép URL-je
+                    imageUrl: item.imageName? `http://localhost:8080/api/images/${item.imageName}` : placeholder, 
                 }));
                 setCells(data);
             } catch (error) {
@@ -29,14 +36,14 @@ export default function MyGameDescriptions() {
         };
     
         fetchGameDescriptions();
-    }, [FETCH_GAME_DESCRIPTIONS_URL]); // Csak a komponens betöltésekor fut le
+    }, [FETCH_GAME_DESCRIPTIONS_URL, auth.accessToken]); 
 
     const addCell = () => {
         navigate("/add-new-description");
     };
 
     const handleEdit = (id) => {
-        navigate(`/edit-description/${id}`); // Navigálás a szerkesztő oldalra az ID-vel
+        navigate("/edit-description", {state: { id }}); 
     };
     
     return (

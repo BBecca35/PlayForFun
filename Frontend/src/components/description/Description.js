@@ -2,19 +2,17 @@ import React from 'react';
 import './Description.css';
 import placeholder from '../Assets/placeholder.png';
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
+import { useLocation } from 'react-router-dom';
+import axiosInstance from '../../api/axiosInstance';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { format } from 'date-fns';
 
 export default function Description() {
    
-    const { id } = useParams(); 
-
-    const userId = localStorage.getItem('userId');
-    const userIdLong = userId ? Number(userId) : null;
-
+    const location = useLocation();
+    const id = location.state?.id; 
     const [gameName, setGameName] = useState('');
     const [gdUserId, setGdUserId] = useState('');
     const [creator, setCreator] = useState('');
@@ -33,12 +31,17 @@ export default function Description() {
     const [hover, setHover] = useState(null);
     const [comments, setComments] = useState([]);
     const [isArrayEmpty ,setIsArrayEmpty] = useState(false);
-
+    const { auth } = useAuth();
     
     useEffect(() => {
         const fetchGameDescription = async () => {
             try {
-                const gdResponse = await axiosInstance.get(`/gd-api/gameDescriptions/${id}`);
+                const gdResponse = await axiosInstance.get(`/gd-api/gameDescriptions/${id}`,
+                    {
+                        headers: { "Authorization": `Bearer ${auth.accessToken}`, 
+                        'Accept': 'application/json' 
+                    }}
+                );
                 const gdData = gdResponse.data;
                 //console.log("API válasz:", gdData); 
                 setGdUserId(gdData.userId);
@@ -56,7 +59,12 @@ export default function Description() {
                     setImage(imageUrl);
                 }
                 if(gdUserId){
-                    const response = await axiosInstance.get(`/user-api/user/${gdUserId}`);
+                    const response = await axiosInstance.get(`/user-api/user/get/${gdUserId}`,
+                        {
+                            headers: { "Authorization": `Bearer ${auth.accessToken}`, 
+                            'Accept': 'application/json' 
+                        }}
+                    );
                     const userData = response.data;
                     setCreator(userData.username);
                 }
@@ -66,8 +74,11 @@ export default function Description() {
             }
         };
 
+        
         fetchGameDescription();
-    }, [id, gdUserId]);
+    }, [id, gdUserId, auth.accessToken]);
+
+    
 
     
     const addCreatorsToComments = async (comments) => {
@@ -75,15 +86,22 @@ export default function Description() {
             comments.map(async (comment) => {
                 if (comment.userId) {
                     try {
-                        // Lekérdezzük a felhasználói adatokat az API-ról
-                        const userResponse = await axiosInstance.get(`/user-api/user/${comment.userId}`);
+                        
+                        const userResponse = await axiosInstance.get(`/user-api/user/get/${comment.userId}`, 
+                            {
+                                headers: { "Authorization": `Bearer ${auth.accessToken}`, 
+                                'Accept': 'application/json' 
+                            },
+                            withCredentials: true
+                        }
+                        );
                         const userData = userResponse.data;
-                        comment.creator = userData.username; // Hozzáadjuk a creator mezőt
+                        comment.creator = userData.username; 
                     } catch (error) {
-                        comment.creator = "Ismeretlen"; // Hibakezelés
+                        comment.creator = "Ismeretlen"; 
                     }
                 } else {
-                    comment.creator = "Ismeretlen"; // Ha nincs userId
+                    comment.creator = "Ismeretlen"; 
                 }
                 return comment;
             })
@@ -94,20 +112,24 @@ export default function Description() {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const commentResponse = await axiosInstance.get(`/comment-api/gameDescription/${id}/comments`);
+                const commentResponse = await axiosInstance.get(`/comment-api/gameDescription/${id}/comments`,
+                    {
+                        headers: { "Authorization": `Bearer ${auth.accessToken}`, 
+                        'Accept': 'application/json' 
+                    }}
+                );
                 let commentData = commentResponse.data.map((item) => ({
                        id: item.id,
                        userId: item.userId,
                        message: item.message,
                        rating: item.rating === null ? 0 : item.rating,
-                       isMyComment: item.userId === userIdLong,
+                       isMyComment: item.userId === auth.userId,
                        createdAt: format(new Date(item.createdAt), "yyyy. MM. dd. HH:mm")
                 }));
 
                 commentData = await addCreatorsToComments(commentData);
                 setComments(commentData);
 
-                //console.log("API válasz:", gdData); 
 
             } catch (error) {
                 console.error("Hiba történt az adatok betöltésekor: ", error);
@@ -115,7 +137,7 @@ export default function Description() {
         };
 
         fetchComments();
-    }, [id]);
+    }, [id, auth.accessToken, auth.userId]);
 
     useEffect(() => {
             if (comments.length === 0) {
@@ -183,14 +205,13 @@ export default function Description() {
             return;
         }
         
-        const userId = localStorage.getItem('userId');
-        const userIdLong = userId ? Number(userId) : null;
-        const COMMENT_POST_URL = `/comment-api/user/${userIdLong}/gameDescription/${id}/comments`;
+        const COMMENT_POST_URL = `/comment-api/user/${auth.userId}/gameDescription/${id}/comments`;
         try{
-            //console.log("Küldött adatok:", { comment, rating });
-            const commentResponse = await axiosInstance.post(COMMENT_POST_URL, 
+            await axiosInstance.post(COMMENT_POST_URL, 
                 JSON.stringify({ message: comment, rating: rating }), {
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json',
+                            "Authorization": `Bearer ${auth.accessToken}`
+                        },
                         withCredentials: true 
                 }
             )
@@ -213,10 +234,6 @@ export default function Description() {
             }
             console.error("Hiba történt: ", error.message);
         }
-
-    /*
-    A leírás képe alá egy átlag értékelőt kéne majd megjeleníteni, ami átlagolja a másoktól kapott értékeléseket és azt jeleníti meg. 
-    */    
         
     }
 

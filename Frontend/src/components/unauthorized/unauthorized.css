@@ -1,0 +1,33 @@
+.unauth{
+    font-family: Arial, sans-serif;
+    background-color: #127BA3;
+    min-height: 100vh;
+    padding-top: 60px;
+    width: 75vw;
+}
+
+.unauth-title{
+    display: flex;
+    text-align: left;
+    margin-top: 20px;
+    font-size: 50px;
+    font-weight: bold;
+    color: white;
+}
+
+.unauth-message{
+    display: flex;
+    text-align: left;
+    margin-top: 20px;
+    font-size: 30px;
+    color: white;
+}
+
+.triangle-icon{
+    display: flex;
+    justify-items: center;
+    font-size: 300px;
+    margin-left: 30vw;
+    margin-top: 50px;
+    color: white;
+}

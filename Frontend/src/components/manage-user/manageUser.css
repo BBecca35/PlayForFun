@@ -1,0 +1,75 @@
+.manage-user-page{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: #4fc4f3;
+    width: 70vw;
+    min-height: 100vh;
+    height: auto;
+    padding-top: 60px;
+}
+
+.user-data-container{
+    display: flex;
+    flex-direction: column;
+    margin-right: auto;
+    margin-left: 50px;
+    margin-top: 30px;
+    width: 450px;
+}
+
+.settings-option-container{
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: 50px;
+    margin-top: 30px;
+    width: 450px;
+}
+
+.user-data-title, .settings-option-title{
+    display: flex;
+    height: fit-content;
+    text-align: left;
+    font-size: 40px;
+    color: white;
+}
+
+.user-data-title-line, .settings-option-title-line{
+    position: relative;
+    margin-top: 5px;
+    width: 100%;
+    height: 5px;
+    border: none;
+    background: white; 
+    opacity: 100%;
+}
+
+.user-data{
+    display: flex;
+    margin: 0 20px 10px;
+    text-align: left;
+    font-size: 20px;
+    color: white;
+}
+
+.option-button{
+    background-color:#62e1fe;
+    border: 2px solid #0886c1;
+    width: (100% - 20px);
+    height: 40px;
+    align-items: center;
+    padding: 5px 10px;
+    margin: 0 20px 20px;
+    color: #0886c1;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.3);
+}
+
+.option-button:hover{
+    background-color: #0886c1;
+    border: 2px solid #62e1fe;
+    color: #62e1fe;
+}

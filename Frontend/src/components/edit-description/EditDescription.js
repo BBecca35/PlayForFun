@@ -2,13 +2,15 @@ import React from 'react';
 import './EditDescription.css';
 import placeholder from '../Assets/placeholder.png';
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import useAuth from '../../hooks/useAuth';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axiosInstance from '../../api/axiosInstance';;
+
 
 export default function EditDescription() {
    
-    const { id } = useParams(); // Játékleírás ID-jének lekérése az URL-ből
-
+    const location = useLocation();
+    const id = location.state?.id;
     const [gameName, setGameName] = useState('');
     const [publisher, setPublisher] = useState('');
     const [description, setDescription] = useState('');
@@ -18,12 +20,17 @@ export default function EditDescription() {
     const [ageLimit, setAgeLimit] = useState('');
     const [image, setImage] = useState(placeholder);
     const navigate = useNavigate();
-
+    const { auth } = useAuth();
 
     useEffect(() => {
         const fetchGameDescription = async () => {
             try {
-                const response = await axiosInstance.get(`/gd-api/gameDescriptions/${id}`);
+                const response = await axiosInstance.get(`/gd-api/gameDescriptions/${id}`,
+                {
+                    headers: { Authorization: `Bearer ${auth.accessToken}`, 
+                               Accept: 'application/json' 
+                    }
+                });
                 const data = response.data;
                 setGameName(data.name);
                 setPublisher(data.publisher);
@@ -42,7 +49,7 @@ export default function EditDescription() {
         };
 
         fetchGameDescription();
-    }, [id]);
+    }, [id, auth.accessToken]);
 
     const generateYearOptions = () => {
         const currentYear = new Date().getFullYear();
@@ -69,11 +76,9 @@ export default function EditDescription() {
     const handleSaving = async (e) => {
         e.preventDefault();
 
-        const userId = localStorage.getItem('userId');
         const publicationYearInt = parseInt(publicationYear, 10);
         const ageLimitInt = parseInt(ageLimit, 10);
-        const userIdLong = userId ? Number(userId) : null;
-        const EDIT_DESCRIPTION_URL = `gd-api/user/${userIdLong}/gameDescriptions/${id}`
+        const EDIT_DESCRIPTION_URL = `gd-api/user/${auth.userId}/gameDescriptions/${id}`
 
         const formData = new FormData();
         formData.append("dto", new Blob ([JSON.stringify({
@@ -87,11 +92,10 @@ export default function EditDescription() {
         })], {type: "application/json"}));
 
         if (image && image !== placeholder) {
-            // Csak akkor adjuk hozzá a fájlt, ha van tényleges fájl
             const fileInput = document.getElementById("myfile");
             if (fileInput.files.length > 0) {
-                const file = fileInput.files[0]; // A feltöltött fájl
-                formData.append("image", file); // Fájl csatolása
+                const file = fileInput.files[0];
+                formData.append("image", file);
             }
         }
 
@@ -110,9 +114,12 @@ export default function EditDescription() {
         }
 
         try {
-            const response = await axiosInstance.put(
+            await axiosInstance.put(
                 EDIT_DESCRIPTION_URL, 
-                formData
+                formData, {
+                    headers: { "Authorization": `Bearer ${auth.accessToken}`, 
+                    'Accept': 'application/json' 
+                }}
             );
             navigate("/my-game-descriptions");         
     
@@ -137,7 +144,10 @@ export default function EditDescription() {
             try {
                 const DELETE_URL = `/gd-api/gameDescriptions/${id}`;
                 await axiosInstance.delete(
-                    DELETE_URL, 
+                    DELETE_URL, {
+                        headers: { "Authorization": `Bearer ${auth.accessToken}`, 
+                        'Accept': 'application/json' 
+                    }}
                 );
                 navigate("/my-game-descriptions");         
         
@@ -153,6 +163,8 @@ export default function EditDescription() {
                 }
                 console.error("Hiba történt: ", error.message);
             }
+        }else{
+            return;
         }
     };
 

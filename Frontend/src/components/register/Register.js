@@ -1,20 +1,15 @@
 import React from 'react';
 import "../register/Register.css";
-
 import user_icon from "../Assets/person.png";
 import password_icon from "../Assets/password.png";
 import email_icon from "../Assets/email.png";
-
 import { useNavigate } from 'react-router-dom';
-
-import axiosInstance from '../../api/axios';
+import axiosInstance from '../../api/axiosInstance';
 import { useState } from "react";
-
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const REGISTER_URL = '/user-api/register';
-
 
 export default function Register() {
 

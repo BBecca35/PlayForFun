@@ -1,62 +1,58 @@
-import React from 'react';
 import "../login/Login.css";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
-
+import { jwtDecode } from "jwt-decode";
+import axiosInstance from "../../api/axiosInstance";
+import useInput from "../../hooks/useInput";
+import useAuth from '../../hooks/useAuth';
 import user_icon from "../Assets/person.png";
 import password_icon from "../Assets/password.png";
-const LOGIN_URL = '/api/auth/login'
 
-export default function Login( { onLogin } ) {
+const LOGIN_URL = "/api/auth/login"
 
-    const [ username, setUsername ] = useState('');
+export default function Login() {
+
+    const [user, resetUser, userAttribs] = useInput('user', '')
     const [ password, setPassword ] = useState('');
-    const [ checkbox, setCheckbox ] = useState(false);
-    const navigate = useNavigate(); 
+    const { setAuth, persist, setPersist } = useAuth();
+    const navigate = useNavigate();
 
+    const calculateExpirationDate = (creationDate, durationInSeconds) => {
+        const createdAt = new Date(creationDate);
+        const createdAtSeconds = Math.floor(createdAt.getTime() / 1000);
+        const duration = Number(durationInSeconds);
+        const expirationSeconds = createdAtSeconds + duration;
+        return new Date(expirationSeconds * 1000);
+    };
+   
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!username.trim() || !password.trim()) {
+        if (!user.trim() || !password.trim()) {
             alert("A felhasználónév vagy a jelszó mező üres!");
             return;
         }
 
         try {
+
             const response = await axiosInstance.post(LOGIN_URL, 
-                JSON.stringify({ username, password }),
+                JSON.stringify({ username: user, password: password, checkedRememberMe: persist }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 }
             );
 
-            const { accessToken, refreshToken, tokenType, userId } = response.data;
-
-            //console.log(`Emlékezz rám értéke: ${checkbox}`);
+            const accessToken = response.headers['authorization'];
+            sessionStorage.setItem('accessToken', accessToken);
+            const decodedToken = jwtDecode(accessToken);
+            const userId = decodedToken.userId;
+            const role = decodedToken.role;
             
-            if (checkbox) {
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('refreshToken', refreshToken);
-                localStorage.setItem('tokenType', tokenType);
-                localStorage.setItem('userId', userId);
-                localStorage.setItem('rememberMe', 'true');
-              } else {
-                localStorage.setItem('accessToken', accessToken);
-                localStorage.setItem('tokenType', tokenType);
-                localStorage.setItem('userId', userId);
-                localStorage.setItem('rememberMe', 'false');
-              }
-
-            //console.log('LocalStorage Access Token:', localStorage.getItem('accessToken'));
-            //console.log('LocalStorage Refresh Token:', localStorage.getItem('refreshToken')); 
-            //console.log('LocalStorage user Id:', localStorage.getItem('userId')); 
-
-            onLogin();
-            setUsername('');
-            setPassword(''); 
-            navigate('/home');
+            setAuth({ user, userId, roles:[role], accessToken });
+            resetUser();
+            setPassword('');
+            navigate("/home");
             
     
         } catch (error) {
@@ -65,9 +61,15 @@ export default function Login( { onLogin } ) {
                 console.error(`Hiba történt: ${status} - ${data.error}`);
                 if (status === 400) {
                     alert("Nem található a felhasználó!");
-                } else if (status === 403) {
-                    alert("Hibás felhasználónév vagy jelszó!");    
-                } else {
+                } else if (status === 403 && data.error !== "The user is banned.") {
+                    alert("Hibás felhasználónév vagy jelszó!");
+                } else if(status === 403 && data.error === "The user is banned.") {
+                    alert(`Ki lettél tiltva!\n\nEddig: ${data.banExpiration === "-1" ? 
+                        "Végleges" :
+                        (calculateExpirationDate(data.bannedAt, data.banExpiration)).toLocaleString()
+                    } \nIndoka: ${data.reason}` 
+                );
+                }else {
                     alert(`Ismeretlen hiba: ${status} - ${data.error}`);
                 }
             }
@@ -75,6 +77,15 @@ export default function Login( { onLogin } ) {
         }
     };
     
+    const togglePersist = () => {
+        setPersist(prev => !prev);
+    }
+
+    useEffect(() => {
+        localStorage.setItem("persist", persist);
+    }, [persist])
+
+
     return (
         <form className='login-container' onSubmit={handleSubmit}>
             <div className='login-title'>Bejelentkezés</div>
@@ -86,8 +97,8 @@ export default function Login( { onLogin } ) {
                                name='username' 
                                placeholder='Felhasználónév'
                                autoComplete='off'
-                               value={username}
-                               onChange={(e) => setUsername(e.target.value)} 
+                               value={user}
+                               {...userAttribs}
                         />
                     </div>
                     <div className='input'>
@@ -105,14 +116,14 @@ export default function Login( { onLogin } ) {
                     <div>
                         <input type="checkbox" 
                                id="remember" 
-                               checked={checkbox} 
-                               onChange={(e) => setCheckbox(e.target.checked)}
+                               checked={persist} 
+                               onChange={togglePersist}
                         />
-                        <label for="remember" className="custom-checkbox">Emlékezz rám</label>
+                        <label htmlFor="remember" className="custom-checkbox">Emlékezz rám</label>
                     </div>
 
-                    <div className='submit-container'>
-                        <button type='submit' className='submit'>Belépés</button>
+                    <div className='login-submit-button-container'>
+                        <button type='submit' className='login-submit-button'>Belépés</button>
                     </div>
                 </div>
 
@@ -120,4 +131,3 @@ export default function Login( { onLogin } ) {
     );
 }
 
-//https://medium.com/@javatechie/how-to-kill-the-process-currently-using-a-port-on-localhost-in-windows-31ccdea2a3ea

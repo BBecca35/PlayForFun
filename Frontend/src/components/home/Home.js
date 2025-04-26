@@ -1,8 +1,10 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../api/axios';
+import axiosInstance from '../../api/axiosInstance';
+import useAuth from '../../hooks/useAuth';
 import './Home.css';
+import placeholder from '../Assets/placeholder.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter, faStar, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,6 +20,7 @@ export default function Home() {
     const [searchDescription, setSearchDescription] = useState('');
     const [notFoundDescription, setNotFoundDescription] = useState(false);
     const [resetTrigger, setResetTrigger] = useState(false);
+    const { auth } = useAuth();
 
     const currentYear = new Date().getFullYear();
     const [range, setRange] = useState({ min: 1952, max: currentYear });
@@ -35,13 +38,13 @@ export default function Home() {
     });
       
     const handleMinChange = (e) => {
-        const min = Math.min(Number(e.target.value), range.max - 1); // Ne engedje átfedni a fogantyúkat
+        const min = Math.min(Number(e.target.value), range.max - 1);
         setRange((prevRange) => ({ ...prevRange, min }));
         setFilterState({ ...filterState, minPublishedAt: min });
     };
       
     const handleMaxChange = (e) => {
-        const max = Math.max(Number(e.target.value), range.min + 1); // Ne engedje átfedni a fogantyúkat
+        const max = Math.max(Number(e.target.value), range.min + 1);
         setRange((prevRange) => ({ ...prevRange, max }));
         setFilterState({ ...filterState, maxPublishedAt: max });
     };
@@ -58,11 +61,17 @@ export default function Home() {
         if(!isFiltering && !notFoundDescription && !isMatching){
             const fetchGameDescriptions = async () => {
                 try {
-                    const response = await axiosInstance.get(FETCH_GAME_DESCRIPTIONS_URL);
+                    const response = await axiosInstance.get(FETCH_GAME_DESCRIPTIONS_URL,
+                        {
+                            headers:{
+                                "Authorization": `Bearer ${auth.accessToken}`
+                            }
+                        }
+                    );
                     const data = response.data.map((item) => ({
                         id: item.id,
                         title: item.name,
-                        imageUrl: `http://localhost:8080/api/images/${item.imageName}`, // A kép URL-je
+                        imageUrl: item.imageName? `http://localhost:8080/api/images/${item.imageName}` : placeholder, 
                     }));
                     setCells(data);
                 } catch (error) {
@@ -73,7 +82,7 @@ export default function Home() {
         
             fetchGameDescriptions();
         }
-    }, [FETCH_GAME_DESCRIPTIONS_URL, isFiltering, notFoundDescription, resetTrigger, isMatching]);
+    }, [FETCH_GAME_DESCRIPTIONS_URL, isFiltering, notFoundDescription, isMatching, auth.accessToken]);
 
     useEffect(() => {
         if (cells.length === 0) {
@@ -81,14 +90,14 @@ export default function Home() {
         } else {
             setIsArrayEmpty(false);
         }
-    }, [cells]); // cells változása esetén fut le
+    }, [cells]); 
     
     const handleEdit = (id) => {
-        navigate(`/description/${id}`); // Navigálás a szerkesztő oldalra az ID-vel
+        navigate("/description", { state: {id}}); 
     };
 
     const toggleFilter = () => {
-        setIsFilterOpen(!isFilterOpen); // Dropdown megnyitása/zárása
+        setIsFilterOpen(!isFilterOpen); 
     };
 
     const [selected1, setSelected1] = useState("-- Választás --");
@@ -193,13 +202,18 @@ export default function Home() {
                 Object.entries(filterState).filter(([_, value]) => (value !== null && value !== ""))
             );
             
-            const response = await axiosInstance.post("/gd-api/gameDescriptions/filter", filteredState);
+            const response = await axiosInstance.post("/gd-api/gameDescriptions/filter", filteredState,
+                {
+                    headers:{
+                        "Authorization": `Bearer ${auth.accessToken}`
+                    }
+                }
+            );
             const data = response.data.map((item) => ({
                 id: item.id,
                 title: item.name,
-                imageUrl: `http://localhost:8080/api/images/${item.imageName}`,
+                imageUrl: item.imageName? `http://localhost:8080/api/images/${item.imageName}` : placeholder,
             }));
-            console.log(`${data}`);
             setCells(data);
             setIsArrayEmpty(false);
             setIsFilterStateEmpty(data.length === 0);
@@ -211,7 +225,7 @@ export default function Home() {
     };
 
     const resetFilters = async () => {
-        // Szűrőfeltételek visszaállítása alapértelmezett értékekre
+        
         setFilterState({
             genre: null,
             platform: null,
@@ -221,7 +235,7 @@ export default function Home() {
             avgRating: null,
         });
     
-        // UI elemek visszaállítása
+        
         setSelectedGenre("-- Választás --");
         setSelectedPlatform("-- Választás --");
         setSelectedAgeLimit("-- Választás --");
@@ -231,7 +245,7 @@ export default function Home() {
         setIsFilterStateEmpty(false);
         setIsFiltering(false);   
     
-        // Összes játékleírás újra lekérése
+        
     };
 
     const applySorting = async () => {
@@ -239,11 +253,17 @@ export default function Home() {
             setIsFiltering(true);
             if(selected1 === "Növekvő"){
                 try{
-                    const response = await axiosInstance.get("/gd-api/gameDescriptions/sorted/ByUserNameAsc");
+                    const response = await axiosInstance.get("/gd-api/gameDescriptions/sorted/ByUserNameAsc", 
+                        {
+                            headers:{
+                                "Authorization": `Bearer ${auth.accessToken}`
+                            }
+                        }
+                    );
                     const data = response.data.map((item) => ({
                         id: item.id,
                         title: item.name,
-                        imageUrl: `http://localhost:8080/api/images/${item.imageName}`,
+                        imageUrl: item.imageName? `http://localhost:8080/api/images/${item.imageName}` : placeholder,
                     }));
                     setCells(data);
                     setIsArrayEmpty(data.length === 0);
@@ -256,11 +276,17 @@ export default function Home() {
 
             if(selected1 === "Csökkenő"){
                 try{
-                    const response = await axiosInstance.get("/gd-api/gameDescriptions/sorted/ByUserNameDesc");
+                    const response = await axiosInstance.get("/gd-api/gameDescriptions/sorted/ByUserNameDesc", 
+                        {
+                            headers:{
+                                "Authorization": `Bearer ${auth.accessToken}`
+                            }
+                        }
+                    );
                     const data = response.data.map((item) => ({
                         id: item.id,
                         title: item.name,
-                        imageUrl: `http://localhost:8080/api/images/${item.imageName}`,
+                        imageUrl: item.imageName? `http://localhost:8080/api/images/${item.imageName}` : placeholder,
                     }));
                     setCells(data);
                     setIsArrayEmpty(data.length === 0);
@@ -273,11 +299,17 @@ export default function Home() {
 
             if(selected2 === "Növekvő"){
                 try{
-                    const response = await axiosInstance.get("/gd-api/gameDescriptions/sorted/ByNameAsc");
+                    const response = await axiosInstance.get("/gd-api/gameDescriptions/sorted/ByNameAsc", 
+                        {
+                            headers:{
+                                "Authorization": `Bearer ${auth.accessToken}`
+                            }
+                        }
+                    );
                     const data = response.data.map((item) => ({
                         id: item.id,
                         title: item.name,
-                        imageUrl: `http://localhost:8080/api/images/${item.imageName}`,
+                        imageUrl: item.imageName? `http://localhost:8080/api/images/${item.imageName}` : placeholder,
                     }));
                     setCells(data);
                     setIsArrayEmpty(data.length === 0);
@@ -290,11 +322,17 @@ export default function Home() {
 
             if(selected2 === "Csökkenő"){
                 try{
-                    const response = await axiosInstance.get("/gd-api/gameDescriptions/sorted/ByNameDesc");
+                    const response = await axiosInstance.get("/gd-api/gameDescriptions/sorted/ByNameDesc",
+                        {
+                            headers:{
+                                "Authorization": `Bearer ${auth.accessToken}`
+                            }
+                        }
+                    );
                     const data = response.data.map((item) => ({
                         id: item.id,
                         title: item.name,
-                        imageUrl: `http://localhost:8080/api/images/${item.imageName}`,
+                        imageUrl: item.imageName? `http://localhost:8080/api/images/${item.imageName}` : placeholder,
                     }));
                     setCells(data);
                     setIsArrayEmpty(data.length === 0);
@@ -325,17 +363,23 @@ export default function Home() {
         if(searchDescription.trim()){
             
             try{
-                const response = await axiosInstance.get(`/gd-api/name/${searchDescription}/gameDescription`);
+                const response = await axiosInstance.get(`/gd-api/name/${searchDescription}/gameDescription`,
+                    {
+                        headers:{
+                            "Authorization": `Bearer ${auth.accessToken}`
+                        }
+                    }
+                );
                 const data = Array.isArray(response.data)
                     ? response.data.map((item) => ({
                         id: item.id,
                         title: item.name,
-                        imageUrl: `http://localhost:8080/api/images/${item.imageName}`,
+                        imageUrl: item.imageName? `http://localhost:8080/api/images/${item.imageName}` : placeholder,
                     }))
                     : [{
                         id: response.data.id,
                         title: response.data.name,
-                        imageUrl: `http://localhost:8080/api/images/${response.data.imageName}`,
+                        imageUrl: response.data.imageName ? `http://localhost:8080/api/images/${response.data.imageName}` : placeholder,
                     }];
                 setCells(data);
                 setIsArrayEmpty(data.length === 0);
